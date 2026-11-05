@@ -34,6 +34,7 @@ button,input,select{font:inherit;color:inherit}
 .parts button{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:3px 11px;font-size:12.5px;color:var(--muted);cursor:pointer}
 .parts button[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
 .parts button:disabled{cursor:default;opacity:.55}
+.parts button:disabled::after{content:" (soon)";font-size:11px}
 .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:2px;gap:2px}
 .seg button{border:0;background:transparent;border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
@@ -88,6 +89,8 @@ html[data-look="vacuum"] .stars{color:#F2C14E}
 .cond .ce{font-family:var(--math);font-size:17px;margin:8px 0 4px}
 .cond .cn{font-size:12.5px;color:var(--muted);line-height:1.4}
 .seg button:disabled{opacity:.4;cursor:not-allowed}
+#spd button{padding:3px 9px;font-size:12.5px}
+@media (max-width:900px){.tline{flex-wrap:wrap;row-gap:6px}.tline input[type=range]{min-width:140px}#spd{order:5}.tline .tread{min-width:0;font-size:12px;order:4;flex:1;text-align:right}}
 .veil{display:grid;place-items:center;height:200px;border:1px dashed var(--rule);border-radius:var(--r);color:var(--muted);font-size:14px;text-align:center;padding:16px}
 .tag{position:absolute;font-size:12px;color:var(--muted);pointer-events:none;transform:translate(-50%,-50%);white-space:nowrap}
 .tag b{font-weight:600}
@@ -188,6 +191,7 @@ dialog p{margin:0 0 10px}
    <div class="tline">
     <button class="play" id="play" aria-label="Fly the ion"><svg viewBox="0 0 16 16" aria-hidden="true"><path id="playIcon" d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg></button>
     <input type="range" id="scrub" min="0" max="1000" value="1000" aria-label="Position along the rods">
+    <div class="seg" role="group" aria-label="Animation speed" id="spd"><button data-s="0.25">¼×</button><button data-s="0.5">½×</button><button data-s="1" aria-pressed="true">1×</button><button data-s="2">2×</button></div>
     <span class="tread" id="tread"></span>
    </div>
    <nav class="tabs" role="tablist" aria-label="Panels">
@@ -253,7 +257,7 @@ var NM=14;
 function a0(q){var d=[],o=[];for(var k=0;k<NM;k++){d.push(4*k*k);if(k<NM-1)o.push(k===0?Math.SQRT2*q:q);}return triMin(d,o);}
 function b1(q){var d=[1-q],o=[];for(var k=1;k<NM;k++)d.push((2*k+1)*(2*k+1));for(k=0;k<NM-1;k++)o.push(q);return triMin(d,o);}
 function a1(q){var d=[1+q],o=[];for(var k=1;k<NM;k++)d.push((2*k+1)*(2*k+1));for(k=0;k<NM-1;k++)o.push(q);return triMin(d,o);}
-function region(a,q){var A0=a0(q);return {x:a>A0&&a<b1(q),y:a<-A0&&a>-a1(q)};}
+function region(a,q){var A0=a0(q);return {x:a>A0&&a<b1(q),y:a<-A0&&a>-b1(q)};}
 var CURVE=(function(){var c=[];for(var i=0;i<=200;i++){var q=i/200;c.push([q,-a0(q),b1(q)]);}return c;})();
 var TOP=(function(){var c=[];for(var i=0;i<=120;i++){var q=0.908*i/120;c.push([q,Math.max(0,Math.min(-a0(q),b1(q)))]);}return c;})();
 /* ---------- ion bank (nominal m/z; hidden from students) ---------- */
@@ -551,8 +555,8 @@ function bindTime(){$('play').addEventListener('click',function(){if(MODE==='cha
 function update(restart){compute();TMAX=tmax();
   if(MODE==='challenge'&&G.state==='ready'){TAU=0;PLAY=false;}else if(restart){TAU=0;PLAY=true;}else{TAU=Math.min(TAU,TMAX);if(!PLAY)TAU=TMAX;}
   status();if(MODE==='journey')syncCtl();eqs();drawDiag();buildPaths();drawPaths();tread();DIRTY=true;}
-var lastT=0;function loop(t){var dt=Math.min(0.25,(t-lastT)/1000);lastT=t;
-  if(PLAY){TAU+=dt*TMAX/(MODE==='challenge'?4.5:7);if(TAU>=TMAX){TAU=TMAX;PLAY=false;if(MODE==='challenge'&&G.state==='flying')finishFlight();}tread();drawPaths();DIRTY=true;}
+var SPD=1,lastT=0;function loop(t){var dt=Math.min(0.25,(t-lastT)/1000);lastT=t;
+  if(PLAY){TAU+=dt*SPD*TMAX/(MODE==='challenge'?6:10);if(TAU>=TMAX){TAU=TMAX;PLAY=false;if(MODE==='challenge'&&G.state==='flying')finishFlight();}tread();drawPaths();DIRTY=true;}
   if(DIRTY&&renderer){updateScene();placeCam();renderer.render(scene,camera);tags();drawEnd();DIRTY=false;}requestAnimationFrame(loop);}
 function setLook(l){document.documentElement.setAttribute('data-look',l);$('lookA').setAttribute('aria-pressed',String(l==='figure'));$('lookB').setAttribute('aria-pressed',String(l==='vacuum'));restyle();drawDiag();drawPaths();status();if(MODE==='challenge')renderGame();}
 function setMode(m){if(m===MODE)return;if(m==='challenge'){SJ={U:S.U,V:S.V};MODE='challenge';document.documentElement.setAttribute('data-mode','challenge');if(!G.started){newGame();}else{S.U=SG.U;S.V=SG.V;S.diag=G.type==='guess'?'aq':'uv';update(false);renderGame();}}
@@ -562,6 +566,7 @@ function setMode(m){if(m===MODE)return;if(m==='challenge'){SJ={U:S.U,V:S.V};MODE
 function panes(){var narrow=window.matchMedia('(max-width:900px)').matches;document.querySelectorAll('[data-pane]').forEach(function(p){p.classList.toggle('on',!narrow||p.dataset.pane===S.pane);});
   document.querySelectorAll('.tabs button').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.t===S.pane));});}
 function boot(){initThree();bindDiag();bindCtl();bindTime();
+  document.querySelectorAll('#spd button').forEach(function(b){b.addEventListener('click',function(){SPD=+b.dataset.s;document.querySelectorAll('#spd button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});});});
   $('lookA').addEventListener('click',function(){setLook('figure');});$('lookB').addEventListener('click',function(){setLook('vacuum');});
   $('guideBtn').addEventListener('click',function(){$('guide').showModal();});
   document.querySelectorAll('.parts button[data-mode]').forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.mode);});});
