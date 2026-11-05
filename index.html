@@ -81,14 +81,14 @@ html[data-look="vacuum"] .stars{color:#F2C14E}
 .dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .dhead h2{margin:0}
 .veil[hidden]{display:none}
+.cond{margin:12px 0 2px;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--soft)}
+.cond .ch{font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.cond .cl{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;font-variant-numeric:tabular-nums}
+.cond .cl i,.cond .cn i,.cond .ce i{font-family:var(--math)}
+.cond .ce{font-family:var(--math);font-size:17px;margin:8px 0 4px}
+.cond .cn{font-size:12.5px;color:var(--muted);line-height:1.4}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
 .veil{display:grid;place-items:center;height:200px;border:1px dashed var(--rule);border-radius:var(--r);color:var(--muted);font-size:14px;text-align:center;padding:16px}
-#qdlg .qopts{display:flex;flex-direction:column;gap:8px;margin:14px 0}
-#qdlg .qopts button{text-align:left;border:1.5px solid var(--rule);background:var(--soft);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:15px}
-#qdlg .qopts button.right{border-color:var(--ion)}#qdlg .qopts button.wrong{border-color:var(--red)}
-#qdlg .qnum{display:flex;gap:8px;margin:14px 0}#qdlg .qnum input{flex:1;border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px;font-size:16px;background:var(--soft)}
-#qdlg .qfb{font-size:14.5px;min-height:1.4em;margin-bottom:12px}
-#qdlg .qfb.ok{color:var(--ion)}#qdlg .qfb.bad{color:var(--red)}
-#qdlg .qtag{font-size:12.5px;color:var(--muted)}
 .tag{position:absolute;font-size:12px;color:var(--muted);pointer-events:none;transform:translate(-50%,-50%);white-space:nowrap}
 .tag b{font-weight:600}
 .tline{display:flex;align-items:center;gap:14px;padding:10px 20px;border-top:1px solid var(--rule);background:var(--panel)}
@@ -222,7 +222,7 @@ dialog p{margin:0 0 10px}
  <p>Rod spacing <i>r</i>₀ = 4.0 mm, RF frequency 1.00 MHz, rod length 15 cm, ion energy 5 eV, singly charged ions starting 0.1 <i>r</i>₀ off the axis. In the 3D view the rods are shortened to fit the screen.</p>
  <p class="note">Equations follow the lecture: a = 4eU/(m r₀²ω²), q = 2eV/(m r₀²ω²), where Φ₀ = U + V cos ωt is the potential between the rod pairs. Stability limits are the Mathieu characteristic curves (apex a = 0.237, q = 0.706; edge q = 0.908 at a = 0).</p>
 </dialog>
-<dialog id="qdlg" aria-labelledby="qtitle"><div class="qtag" id="qtag"></div><h3 id="qtitle" style="margin-top:4px"></h3><div id="qbody"></div><div class="qfb" id="qfb" aria-live="polite"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="qskip">Skip</button><button class="primary" id="qdone" hidden>Back to the game</button></div></dialog>
+
 <script>
 /* three.js r128, MIT License, Copyright 2010-2021 three.js authors, https://threejs.org */
 /**
@@ -390,10 +390,10 @@ function qx(q){return AQ.L+q/AQ.qmax*(AQ.W-AQ.L-AQ.R);}function ay(a){return AQ.
 function el(t,a,txt){var e=document.createElementNS('http://www.w3.org/2000/svg',t);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
 function diagIons(){if(MODE==='challenge')return ION.map(function(o){return {m:o.m,col:ionColor(o),lab:o.f+' '+o.m,me:o.i===G.target};});
   return (S.cmp?[27,28,29]:[S.m]).map(function(m){var o=ION.filter(function(x){return x.m===m;})[0]||{m:m,i:0};return {m:m,col:S.cmp?ionColor(o):css('--ion'),lab:'m/z '+m,me:m===S.m};});}
-function drawDiag(){var veil=MODE==='challenge'&&G.hide;$('aq').style.display=veil?'none':'';$('veil').hidden=!veil;if(veil){$('dnote').textContent='';return;}
+function drawDiag(){$('veil').hidden=true;var guessing=MODE==='challenge'&&G.type==='guess'&&G.state!=='done';if(guessing)S.diag='aq';$('dUV').disabled=guessing;$('dUV').title=guessing?'Available after the ions fly':'';
   $('dAQ').setAttribute('aria-pressed',String(S.diag==='aq'));$('dUV').setAttribute('aria-pressed',String(S.diag==='uv'));
   if(S.diag==='uv')drawUV();else drawAQ();
-  $('dnote').textContent=S.diag==='uv'?'Each shaded triangle is one ion’s stable region in volts. An ion passes when the dot (your U and V) sits inside its triangle. Heavier ions need higher voltages.':'One diagram for every ion: a and q are U and V scaled by m/z. All ions sit on the dashed line; lighter ones further out.';}
+  $('dnote').textContent=guessing?'Place your calculated (q, a) for each ion on this diagram. The ions’ real points appear after they fly.':S.diag==='uv'?'Each shaded triangle is one ion’s stable region in volts. An ion passes when the dot (your U and V) sits inside its triangle. Heavier ions need higher voltages.':'One diagram for every ion: a and q are U and V scaled by m/z. All ions sit on the dashed line; lighter ones further out.';}
 function drawAQ(){var s=$('aq');while(s.firstChild)s.removeChild(s.firstChild);var ink=css('--ink'),mut=css('--muted'),ionc=css('--ion'),red=css('--red');
   var d='M'+qx(0)+' '+ay(0);CURVE.forEach(function(c){var up=Math.max(0,Math.min(c[1],c[2]));d+='L'+qx(c[0]).toFixed(1)+' '+ay(up).toFixed(1);});d+='Z';
   s.appendChild(el('path',{d:d,fill:ionc,'fill-opacity':0.14,stroke:'none'}));
@@ -405,7 +405,9 @@ function drawAQ(){var s=$('aq');while(s.firstChild)s.removeChild(s.firstChild);v
   s.appendChild(el('circle',{cx:qx(0.706),cy:ay(0.237),r:2.5,fill:ink}));s.appendChild(el('text',{x:qx(0.908),y:ay(0)-6,'text-anchor':'middle','font-size':10.5,fill:mut},'0.908'));
   s.appendChild(el('text',{x:qx(0.44),y:ay(0.05),'text-anchor':'middle','font-size':12,fill:ink},'stable'));
   s.appendChild(el('text',{x:qx(0.24),y:ay(0.085),'text-anchor':'middle','font-size':11.5,fill:mut},'unstable in y'));s.appendChild(el('text',{x:qx(0.995),y:ay(0.14),'text-anchor':'end','font-size':11.5,fill:mut},'unstable in x'));
-  var slope=S.V>0?2*S.U/S.V:0,qe=Math.min(1,slope>0?0.3/slope:1);if(S.V>0)s.appendChild(el('line',{x1:qx(0),y1:ay(0),x2:qx(qe),y2:ay(qe*slope),stroke:mut,'stroke-dasharray':'4 4'}));
+  var hideP=MODE==='challenge'&&G.type==='guess'&&G.state!=='done';
+  var slope=S.V>0?2*S.U/S.V:0,qe=Math.min(1,slope>0?0.3/slope:1);if(S.V>0&&!hideP)s.appendChild(el('line',{x1:qx(0),y1:ay(0),x2:qx(qe),y2:ay(qe*slope),stroke:mut,'stroke-dasharray':'4 4'}));
+  if(hideP){[0.2,0.4,0.6,0.8].forEach(function(q){s.appendChild(el('line',{x1:qx(q),y1:ay(0),x2:qx(q),y2:ay(0.3),stroke:css('--rule'),'stroke-width':0.6}));});[0.05,0.1,0.15,0.2,0.25].forEach(function(v){s.appendChild(el('line',{x1:qx(0),y1:ay(v),x2:qx(1),y2:ay(v),stroke:css('--rule'),'stroke-width':0.6}));});return;}
   var list=diagIons();list.forEach(function(it){if(it.me&&MODE==='journey')return;var K=Kf(it.m),a=4*S.U/K,q=2*S.V/K;if(q>1||a>0.3)return;s.appendChild(el('circle',{cx:qx(q),cy:ay(a),r:MODE==='challenge'?4:2.8,fill:MODE==='challenge'?it.col:'none',stroke:it.col,'stroke-width':1.2}));});
   if(MODE==='journey'){inset(s);var ok=R.reg.x&&R.reg.y,cq=Math.min(1,R.q),ca=Math.min(0.3,R.a);s.appendChild(el('circle',{cx:qx(cq),cy:ay(ca),r:12,fill:'transparent',style:'cursor:grab'}));
     s.appendChild(el('circle',{cx:qx(cq),cy:ay(ca),r:5.5,fill:ok?ionc:red,stroke:css('--panel'),'stroke-width':1.5}));}
@@ -478,18 +480,18 @@ function eqs(){var L=S.last,m=R.m,hU=L==='U'||L==='aq',hV=L==='V'||L==='aq',hm=L
 /* ---------- the mass filter challenge ---------- */
 var EXACT={'N₂⁺•':28.0056,'CO⁺•':27.9944,'O₂⁺•':31.9893,'CH₃OH⁺•':32.0257,'C₂H₅⁺':29.0386,'CHO⁺':29.0022,'C₃H₇⁺':43.0542,'CH₃CO⁺':43.0178,'OH⁺':17.0022,'NH₃⁺•':17.0260};
 var ISO=[17,28,29,32,43];
-var G={started:false,score:0,round:0,type:'guess',ions:[],target:0,guess:-1,tries:0,state:'ready',hide:false,lockUV:true,headline:'',sub:'',iso:false,msg:'',msgCls:'',correct:0,lastQ:''};
+var G={started:false,score:0,round:0,type:'guess',ions:[],target:0,guess:-1,tries:0,state:'ready',hide:false,lockUV:true,headline:'',sub:'',iso:false,msg:'',msgCls:''};
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function byMass(m){return shuffle(BANK.filter(function(b){return b[1]===m;}))[0];}
 function spaced(k,rel,avoid){var out=[],pool=shuffle(BANK.slice());avoid=avoid||[];
   pool.forEach(function(b){if(out.length>=k)return;if(avoid.indexOf(b[1])>=0)return;if(out.every(function(o){return Math.abs(o[1]-b[1])/Math.min(o[1],b[1])>rel;}))out.push(b);});return out;}
 function setIons(list){G.ions=list.map(function(b){return {f:b[0],m:b[1]};});}
 function roundType(){var seq=['guess','guess','isolate','isolate','isolate','neighbors'];return G.round<=seq.length?seq[G.round-1]:shuffle(['guess','isolate','isolate','neighbors'])[0];}
-function newGame(){G.started=true;G.score=0;G.round=0;G.correct=0;nextRound();}
+function newGame(){G.started=true;G.score=0;G.round=0;nextRound();}
 function nextRound(){G.round++;G.type=roundType();G.tries=0;G.guess=-1;G.state='ready';G.msg='';G.iso=false;
-  if(G.type==='guess'){for(var t=0;t<60;t++){setIons(spaced(4+Math.floor(Math.random()*2),0.09));G.target=Math.floor(Math.random()*G.ions.length);var K=Kf(G.ions[G.target].m);S.V=0.700*K/2;S.U=0.33*0.700*K/4;compute();
-      var pass=ION.filter(function(o){return o.fate==='pass';});if(pass.length===1&&pass[0].i===G.target)break;}
-    G.hide=true;G.lockUV=true;G.headline='Guess the winner';G.sub='These ions fly into the filter with U and V already set. Only one reaches the detector. Tap the one you think it is, then fire.';}
+  if(G.type==='guess'){for(var t=0;t<80;t++){setIons(spaced(4+Math.floor(Math.random()*2),0.2));G.target=Math.floor(Math.random()*G.ions.length);var K=Kf(G.ions[G.target].m);S.V=Math.round(0.676*K/2*100)/100;S.U=Math.round(0.30*0.676*K/4*100)/100;compute();
+      var pass=ION.filter(function(o){return o.fate==='pass';}),inside=ION.filter(function(o){return o.reg.x&&o.reg.y;});if(pass.length===1&&pass[0].i===G.target&&inside.length===1)break;}
+    G.hide=true;G.lockUV=true;G.headline='Guess the winner';G.sub='U and V are fixed. Work out a and q for each ion, find the one that falls inside the stable region, tap it, then fire.';}
   else{var list;if(G.type==='neighbors'){var tr=shuffle(TRIADS.slice())[0];list=tr.map(byMass);var extra=spaced(1,0.15,tr);list=list.concat(extra);setIons(shuffle(list));G.target=G.ions.map(function(o){return o.m;}).indexOf(tr[1]);}
     else{var useIso=G.round>=5&&Math.random()<0.4;if(useIso){var im=shuffle(ISO.slice())[0],pair=shuffle(BANK.filter(function(b){return b[1]===im;})).slice(0,2);list=pair.concat(spaced(2+Math.floor(Math.random()*2),0.09,[im]));setIons(shuffle(list));G.iso=true;
         var ids=[];G.ions.forEach(function(o,i){if(o.m===im)ids.push(i);});G.target=ids[Math.floor(Math.random()*2)];}
@@ -500,7 +502,7 @@ function nextRound(){G.round++;G.type=roundType();G.tries=0;G.guess=-1;G.state='
   S.diag=G.type==='guess'?'aq':'uv';update(false);renderGame();}
 function fire(){if(G.state==='flying')return;if(G.type==='guess'&&G.guess<0)return;G.tries++;G.state='flying';compute();TMAX=tmax();TAU=0;PLAY=true;G.msg='';renderGame();}
 function finishFlight(){var res=ION.map(function(o){return o.fate;}),tg=ION[G.target],passed=ION.filter(function(o){return o.fate==='pass';});G.state='done';
-  if(G.type==='guess'){var ok=G.guess===G.target;G.hide=false;if(ok){G.score++;G.msg='Right. Only '+tg.f+' reached the detector. +1 star.';G.msgCls='ok';}else{G.msg='Not this time. The winner was '+tg.f+' (m/z '+tg.m+'). Open the diagram to see why.';G.msgCls='bad';}G.won=true;}
+  if(G.type==='guess'){var ok=G.guess===G.target;G.hide=false;if(ok){G.score++;G.msg='Right. '+tg.f+' has q = '+tg.q.toFixed(3)+' and a = '+tg.a.toFixed(3)+', inside the stable region, so only it reached the detector. +1 star.';G.msgCls='ok';}else{var gi=ION[G.guess];G.msg='Not this time. '+gi.f+' has q = '+gi.q.toFixed(3)+', a = '+gi.a.toFixed(3)+', outside the stable region. The winner was '+tg.f+' (q = '+tg.q.toFixed(3)+', a = '+tg.a.toFixed(3)+'). Compare the points on the diagram.';G.msgCls='bad';}G.won=true;}
   else{var win=tg.fate==='pass'&&passed.length===1;if(win){var st=G.tries<=1?3:(G.tries<=3?2:1);G.score+=st;G.won=true;G.msg='Done in '+G.tries+(G.tries===1?' try':' tries')+': only '+tg.f+' reached the detector. +'+st+(st===1?' star.':' stars.');G.msgCls='ok';}
     else{G.won=false;G.state='ready';var names=passed.map(function(o){return o.f;});G.msgCls='bad';
       G.msg=tg.fate!=='pass'?tg.f+' hit the '+tg.fate+' rods ('+(tg.fate==='x'?'it is too light for these settings: lower V':'it is too heavy for these settings: lower U or raise V')+').':'Others got through too: '+names.filter(function(n){return n!==tg.f;}).join(', ')+'. Move the scan line closer to the tip.';
@@ -512,7 +514,8 @@ function cantSeparate(){if(G.state==='flying')return;G.tries++;if(G.iso){var pai
 function chipRes(o){if(G.state!=='done'&&!(G.state==='ready'&&G.tries>0&&G.type!=='guess'))return '';var f=ION[o]?ION[o].fate:'';return f==='pass'?'reached the detector':(f==='x'?'hit an x rod':'hit a y rod');}
 function renderGame(){var g=$('game'),pal=GPAL[vac()?'vacuum':'figure'],lvl=G.type==='guess'?'Guess':G.type==='neighbors'?'Hard':'Isolate';
   var h='<div class="gmeta"><span>Round '+G.round+' ('+lvl+')</span><span class="stars" aria-label="'+G.score+' stars">★ '+G.score+'</span></div><div class="gtitle">'+G.headline+'</div><p class="note" style="margin:0">'+G.sub+'</p><div class="ions" role="group" aria-label="Ions in this round">';
-  G.ions.forEach(function(o,i){var r=chipRes(i),pick=G.type==='guess';h+='<button data-i="'+i+'" '+(pick?'aria-pressed="'+(G.guess===i)+'"':'')+(pick&&G.state!=='ready'?' disabled':'')+(!pick?' disabled':'')+'><b><span class="dot" style="background:'+pal[i%6]+'"></span>'+o.f+'</b><small>m/z '+o.m+(i===G.target&&G.type!=='guess'?', target':'')+'</small>'+(r?'<span class="res" style="color:'+(r==='reached the detector'?css('--ion'):css('--red'))+'">'+r+'</span>':'')+'</button>';});
+  h=h.replace('<div class="ions"',condBox()+'<div class="ions"');
+  G.ions.forEach(function(o,i){var r=chipRes(i),pick=G.type==='guess';h+='<button data-i="'+i+'" '+(pick?'aria-pressed="'+(G.guess===i)+'"':'')+(pick&&G.state!=='ready'?' disabled':'')+(!pick?' disabled':'')+'><b><span class="dot" style="background:'+pal[i%6]+'"></span>'+o.f+'</b><small>m/z '+o.m+(i===G.target&&G.type!=='guess'?', target':'')+'</small>'+(G.state==='done'&&ION[i]?'<small>q = '+ION[i].q.toFixed(3)+', a = '+ION[i].a.toFixed(3)+'</small>':'')+(r?'<span class="res" style="color:'+(r==='reached the detector'?css('--ion'):css('--red'))+'">'+r+'</span>':'')+'</button>';});
   h+='</div>';
   if(!G.lockUV){h+='<div class="ctl" style="margin-top:12px"><div class="lab"><span>DC voltage, <i style="font-family:var(--math)">U</i></span><span class="val" data-g="U" tabindex="0">'+fV(S.U)+'</span></div><input type="range" id="g_U" min="0" max="4000" aria-label="DC voltage U"></div>'
      +'<div class="ctl"><div class="lab"><span>RF amplitude, <i style="font-family:var(--math)">V</i></span><span class="val" data-g="V" tabindex="0">'+fV(S.V)+'</span></div><input type="range" id="g_V" min="0" max="4000" aria-label="RF amplitude V"></div>';}
@@ -520,57 +523,23 @@ function renderGame(){var g=$('game'),pal=GPAL[vac()?'vacuum':'figure'],lvl=G.ty
   h+='<div class="gbtns">';
   if(!(G.state==='done'&&G.won))h+='<button class="primary" id="gFire"'+((G.type==='guess'&&G.guess<0)||G.state==='flying'?' disabled':'')+'>Fire ions</button>';
   else h+='<button class="primary" id="gNext">Next round</button>';
-  h+='<button class="btn" id="gPrac">Practice</button>';
   if(G.type!=='guess'&&!(G.state==='done'&&G.won))h+='<button class="btn" id="gIso">These can’t be separated</button>';
   h+='<button class="btn" id="gNew">New game</button></div><div class="gmsg '+(G.msgCls||'')+'" aria-live="polite">'+(G.msg||'')+'</div>';
   g.innerHTML=h;
   g.querySelectorAll('.ions button').forEach(function(b){b.addEventListener('click',function(){if(G.type!=='guess'||G.state!=='ready')return;G.guess=+b.dataset.i;renderGame();});});
-  if($('gFire'))$('gFire').addEventListener('click',fire);if($('gNext'))$('gNext').addEventListener('click',nextRound);$('gPrac').addEventListener('click',openPractice);if($('gIso'))$('gIso').addEventListener('click',cantSeparate);$('gNew').addEventListener('click',newGame);
+  if($('gFire'))$('gFire').addEventListener('click',fire);if($('gNext'))$('gNext').addEventListener('click',nextRound);if($('gIso'))$('gIso').addEventListener('click',cantSeparate);$('gNew').addEventListener('click',newGame);
   if(!G.lockUV){var hi={U:gHi('U'),V:gHi('V')};['U','V'].forEach(function(k){var r=$('g_'+k);r.value=Math.round(Math.min(1,S[k]/hi[k])*4000);r.style.setProperty('--p',(r.value/40)+'%');
       r.addEventListener('input',function(){S[k]=hi[k]*this.value/4000;S.last=k;gMoved();});});
     g.querySelectorAll('.val[data-g]').forEach(function(v){var k=v.dataset.g;function go(){editVal(v,function(){return S[k].toFixed(2);},function(x){S[k]=x;S.last=k;G.state=G.state==='done'?G.state:'ready';});}v.addEventListener('click',go);v.addEventListener('keydown',function(e){if(e.key==='Enter')go();});});}
   $('tabCtl').textContent=MODE==='challenge'?'Game':'Settings';status();}
+function condBox(){var guess=G.type==='guess';
+  return '<div class="cond"><div class="ch">Conditions</div><div class="cl">'+(guess?'<span><i>U</i> = '+fV(S.U)+'</span><span><i>V</i> = '+fV(S.V)+'</span>':'')+'<span><i>r</i><sub>0</sub> = '+(P.r0*1e3).toFixed(1)+' mm</span><span>ν = '+(P.f/1e6).toFixed(2)+' MHz, ω = 2πν</span><span>every ion has <i>z</i> = +1</span></div>'
+   +'<div class="ce"><i>a</i> = '+frac('4<i>eU</i>','<i>m r</i><sub>0</sub>²ω²')+' &nbsp; <i>q</i> = '+frac('2<i>eV</i>','<i>m r</i><sub>0</sub>²ω²')+'</div>'
+   +'<div class="cn"><i>e</i> = 1.602×10⁻¹⁹ C, and <i>m</i> = (m/z) × 1.6605×10⁻²⁷ kg. An ion reaches the detector only if its point (<i>q</i>, <i>a</i>) is inside the stable region; the tip is at <i>q</i> = 0.706, <i>a</i> = 0.237.</div></div>';}
 function gHi(k){var mmax=Math.max.apply(null,G.ions.map(function(o){return o.m;})),K=Kf(mmax);return k==='V'?K/2*1.0:K/4*0.3;}
 function gMoved(){if(G.state==='flying')return;if(G.state==='done'&&!G.won)G.state='ready';compute();TMAX=tmax();TAU=0;PLAY=false;
   ['U','V'].forEach(function(k){var v=document.querySelector('.val[data-g="'+k+'"]');if(v&&!v.querySelector('input'))v.textContent=fV(S[k]);var r=$('g_'+k);if(r)r.style.setProperty('--p',(r.value/40)+'%');});
   eqs();drawDiag();buildPaths();drawPaths();tread();DIRTY=true;}
-/* ---------- practice questions, generated from the round in progress ---------- */
-var QWAS=false,QCUR=null,QMISS=0;
-function ionsByMass(){return G.ions.map(function(o,i){return {f:o.f,m:o.m,i:i};}).sort(function(a,b){return a.m-b.m;});}
-var QGEN={
- apex:function(){return {tag:'Concept',text:'Your scan line passes exactly through the tip of the stable region. What is the ratio U/V there?',kind:'mc',opts:['0.168','0.336','0.237','0.706'],ans:0,
-   hint:'At the tip, a = 0.237 and q = 0.706. Remember that a/q = 2U/V.',why:'a/q = 0.237/0.706 = 0.336, and a/q = 2U/V, so U/V = 0.336/2 = 0.168.'};},
- largestq:function(){var s=ionsByMass();if(s[0].m===s[1].m)return null;return {tag:'Concept',text:'With the same U and V for every ion, which ion has the largest q?',kind:'mc',opts:G.ions.map(function(o){return o.f+' (m/z '+o.m+')';}),ans:s[0].i,
-   hint:'q = 2eV/(m r₀²ω²). What happens to q as m gets larger?',why:'m is in the denominator, so the lightest ion, '+s[0].f+', has the largest q. It sits furthest out along the scan line.'};},
- firstpass:function(){var s=ionsByMass();if(s[0].m===s[1].m)return null;return {tag:'Predict',text:'You start at low voltages and raise U and V together, keeping U/V fixed. Which ion reaches the stable region first?',kind:'mc',opts:G.ions.map(function(o){return o.f;}),ans:s[0].i,
-   hint:'Each ion’s working point sits on the same scan line, at a distance that depends on m/z. Which one is furthest out?',why:'The lightest ion has the largest a and q, so it is furthest out on the scan line and enters the stable region at the lowest voltages. Heavier ions follow in order of m/z.'};},
- resolution:function(){var s=ionsByMass(),t=s[Math.min(1,s.length-1)];return {tag:'Concept',text:'To let only m/z '+t.m+' through while m/z '+(t.m-1)+' and '+(t.m+1)+' are also present, where should the scan line go?',kind:'mc',opts:['Close to the tip of the stable region (U/V near 0.168)','Lower, with U/V around 0.10','Along the q axis, with U = 0'],ans:0,
-   hint:'The higher the scan line, the narrower the slice of the stable region it cuts.',why:'Near the tip, only a narrow range of q is stable, so only one m/z at a time fits: high resolution. A lower line cuts a wide slice and lets neighbors through; with U = 0 everything below q = 0.908 passes.'};},
- rfonly:function(){var o=shuffle(G.ions.slice())[0],K=Kf(o.m),q=[0.55,0.7,0.82,1.0,1.1,1.25][Math.floor(Math.random()*6)],V=Math.round(q*K/2),qq=2*V/K;
-   return {tag:'Predict',text:'RF-only mode: U = 0 and V = '+V+' V. Does '+o.f+' (m/z '+o.m+') pass through? (r₀ = 4.0 mm, 1.00 MHz)',kind:'mc',opts:['Yes, it passes','No, it hits the rods'],ans:qq<0.908?0:1,
-   hint:'With U = 0, a = 0. Work out q = 2eV/(m r₀²ω²) and compare it with 0.908.',why:'q = '+qq.toFixed(3)+'. With a = 0 the motion is stable only for q < 0.908, so it '+(qq<0.908?'passes.':'is lost.')};},
- diagnose:function(){compute();var lost=ION.filter(function(o){return o.fate!=='pass';});if(!lost.length)return null;var o=shuffle(lost)[0];
-   return {tag:'Diagnose',text:'At the current settings, '+o.f+' hits the '+o.fate+' rods. Is it too light or too heavy for these settings?',kind:'mc',opts:['Too light: the AC field throws it out','Too heavy: the DC field drags it out'],ans:o.fate==='x'?0:1,
-   hint:'Lost to the x rods means unstable in x, past the right edge of the stable region (q too large). Lost to the y rods means unstable in y, past the left edge.',why:o.fate==='x'?'It is unstable in x: its q is too large for this V, which is what happens to an ion that is too light.':'It is unstable in y: its working point lies above the left edge, where the DC term wins, which is what happens to an ion that is too heavy.'};},
- calcq:function(){var o=shuffle(G.ions.slice())[0],K=Kf(o.m),V=Math.round((0.3+Math.random()*0.6)*K/2*10)/10,q=2*V/K;
-   return {tag:'Calculate',text:'What is q for '+o.f+' (m/z '+o.m+') at V = '+V+' V? Use r₀ = 4.0 mm and an RF frequency of 1.00 MHz.',kind:'num',ans:q,tol:0.03,
-   hint:'q = 2eV/(m r₀²ω²), with ω = 2π × 1.00×10⁶ s⁻¹, e = 1.602×10⁻¹⁹ C and m = '+o.m+' × 1.6605×10⁻²⁷ kg.',why:'q = 2 × 1.602×10⁻¹⁹ × '+V+' / ('+o.m+' × 1.6605×10⁻²⁷ × (4.0×10⁻³)² × (2π × 10⁶)²) = '+q.toFixed(3)+'.'};},
- calca:function(){var o=shuffle(G.ions.slice())[0],K=Kf(o.m),U=Math.round((0.05+Math.random()*0.18)*K/4*100)/100,a=4*U/K;
-   return {tag:'Calculate',text:'What is a for '+o.f+' (m/z '+o.m+') at U = '+U+' V? Use r₀ = 4.0 mm and an RF frequency of 1.00 MHz.',kind:'num',ans:a,tol:0.03,
-   hint:'a = 4eU/(m r₀²ω²), with ω = 2π × 1.00×10⁶ s⁻¹, e = 1.602×10⁻¹⁹ C and m = '+o.m+' × 1.6605×10⁻²⁷ kg.',why:'a = 4 × 1.602×10⁻¹⁹ × '+U+' / ('+o.m+' × 1.6605×10⁻²⁷ × (4.0×10⁻³)² × (2π × 10⁶)²) = '+a.toFixed(3)+'.'};}};
-function pickQ(){var pool=['apex','largestq','resolution','rfonly'];if(G.correct>=2)pool=pool.concat(['firstpass','diagnose','diagnose']);if(G.correct>=4)pool=pool.concat(['calcq','calca','calcq']);
-  for(var t=0;t<20;t++){var k=shuffle(pool.slice())[0];if(k===G.lastQ)continue;var q=QGEN[k]();if(q){G.lastQ=k;return q;}}return QGEN.apex();}
-function openPractice(){QWAS=PLAY;PLAY=false;QMISS=0;QCUR=pickQ();var d=$('qdlg');$('qtag').textContent='Practice: '+QCUR.tag;$('qtitle').textContent=QCUR.text;$('qfb').textContent='';$('qfb').className='qfb';$('qdone').hidden=true;$('qskip').hidden=false;
-  var b=$('qbody');if(QCUR.kind==='mc'){b.innerHTML='<div class="qopts">'+QCUR.opts.map(function(o,i){return '<button data-i="'+i+'">'+o+'</button>';}).join('')+'</div>';b.querySelectorAll('button').forEach(function(x){x.addEventListener('click',function(){answer(+x.dataset.i,x);});});}
-  else{b.innerHTML='<div class="qnum"><input id="qin" inputmode="decimal" aria-label="Your answer" placeholder="Your answer"><button class="primary" id="qchk">Check</button></div>';$('qchk').addEventListener('click',function(){answer(parseFloat($('qin').value));});$('qin').addEventListener('keydown',function(e){if(e.key==='Enter')answer(parseFloat($('qin').value));});}
-  d.showModal();}
-function answer(v,btn){if(!$('qdone').hidden)return;var ok=QCUR.kind==='mc'?v===QCUR.ans:(isFinite(v)&&Math.abs(v-QCUR.ans)<=QCUR.tol*Math.abs(QCUR.ans));var fb=$('qfb');
-  if(ok){G.score++;G.correct++;fb.className='qfb ok';fb.textContent='Correct. +1 star. '+QCUR.why;if(btn)btn.classList.add('right');$('qdone').hidden=false;$('qskip').hidden=true;renderGame();return;}
-  QMISS++;if(btn)btn.classList.add('wrong');
-  if(QMISS<2){fb.className='qfb bad';fb.textContent='Not quite. Hint: '+QCUR.hint;}
-  else{fb.className='qfb bad';fb.textContent='The answer: '+(QCUR.kind==='mc'?QCUR.opts[QCUR.ans]:QCUR.ans.toFixed(3))+'. '+QCUR.why;$('qdone').hidden=false;$('qskip').hidden=true;
-    if(QCUR.kind==='mc')$('qbody').querySelectorAll('button')[QCUR.ans].classList.add('right');}}
-function closePractice(){$('qdlg').close();if(QWAS){PLAY=true;}}
 /* ---------- timeline ---------- */
 function tread(){var o=R,n=idxAt(o,TAU),cyc=Math.min(o.cycles,n*o.h/Math.PI),pre=MODE==='challenge'&&G.state==='ready';
   $('tread').textContent=pre?'Ready to fire':(PLAY||TAU<TMAX?'RF cycle '+cyc.toFixed(1)+' of '+o.total.toFixed(1):(MODE==='challenge'?'Flight '+(TMAX*1e6).toFixed(1)+' µs':(o.fate==='pass'?'Transit '+o.tus.toFixed(1)+' µs, '+o.total.toFixed(1)+' RF cycles':'Lost after '+o.cycles.toFixed(1)+' RF cycles')));
@@ -596,14 +565,13 @@ function boot(){initThree();bindDiag();bindCtl();bindTime();
   $('lookA').addEventListener('click',function(){setLook('figure');});$('lookB').addEventListener('click',function(){setLook('vacuum');});
   $('guideBtn').addEventListener('click',function(){$('guide').showModal();});
   document.querySelectorAll('.parts button[data-mode]').forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.mode);});});
-  $('qskip').addEventListener('click',closePractice);$('qdone').addEventListener('click',closePractice);$('qdlg').addEventListener('cancel',function(e){e.preventDefault();closePractice();});
   document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){S.pane=b.dataset.t;panes();if(S.pane==='paths')drawPaths();});});
   var ro=new ResizeObserver(function(){resize();drawPaths();DIRTY=true;});ro.observe($('stage'));ro.observe($('pathc'));
   window.addEventListener('resize',function(){panes();});panes();
   update(true);resize();if(location.hash.indexOf('vacuum')>=0)setLook('vacuum');requestAnimationFrame(loop);if(location.hash.indexOf('challenge')>=0)setMode('challenge');
   window.addEventListener('hashchange',function(){setMode(location.hash.indexOf('challenge')>=0?'challenge':'journey');});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window.__q={skip:function(){if(PLAY)TAU=TMAX*0.9999;},get PLAY(){return PLAY;},get TAU(){return TAU;},get TMAX(){return TMAX;},S:S,G:G,get R(){return R;},get ION(){return ION;},update:update,setMode:setMode,fire:fire,nextRound:nextRound,openPractice:openPractice,answer:answer,get QCUR(){return QCUR;},setTau:function(f){PLAY=false;TAU=f*TMAX;DIRTY=true;tread();drawPaths();}};
+window.__q={skip:function(){if(PLAY)TAU=TMAX*0.9999;},get PLAY(){return PLAY;},get TAU(){return TAU;},get TMAX(){return TMAX;},S:S,G:G,get R(){return R;},get ION(){return ION;},update:update,setMode:setMode,fire:fire,nextRound:nextRound,setTau:function(f){PLAY=false;TAU=f*TMAX;DIRTY=true;tread();drawPaths();}};
 })();
 
 </script>
