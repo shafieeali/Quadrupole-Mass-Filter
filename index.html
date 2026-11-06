@@ -343,7 +343,7 @@ function phiNow(){var w=2*Math.PI*P.f;return S.U+S.V*Math.cos(w*TAU+2*P.ph);}
 function updateScene(){var v=vac(),mx=Math.max(1e-9,S.U+S.V),s=Math.max(-1,Math.min(1,phiNow()/mx));
   var cp=new T3.Color(css('--plus')),cm=new T3.Color(css('--minus')),base=new T3.Color(v?0xaab6c1:0xe3e8ec),cx=Math.sin(CAM.az)*Math.cos(CAM.el),cyv=Math.sin(CAM.el);
   rods.forEach(function(m,k){var near=(m.position.x*cx+m.position.y*cyv)>0.2,op=near?(v?0.22:0.18):1;m.material.transparent=op<1;m.material.opacity=op;m.material.depthWrite=op===1;outlines[k].visible=!v&&!near;
-    m.material.color.copy(base);if(v)m.material.emissive=new T3.Color(0);});
+    m.material.color=new T3.Color(m.userData.pair==='x'?(v?0xC9A07F:0xB77C5E):(v?0x95AAC2:0x6F8DB8));if(v)m.material.emissive=new T3.Color(0);});
   tubes.forEach(function(t,k){var o=t.userData.o,i=idxAt(o,TAU),seg=Math.min(t.userData.seg,Math.ceil(i/t.userData.step));t.geometry.setDrawRange(0,seg*8*6);var p=o.pts[i];heads[k].position.set(p[0],p[1],p[2]*LD);
     marks[k].visible=marks[k].userData.lost&&i>=o.pts.length-1;});}
 function placeCam(){var c=CAM,ce=Math.cos(c.el);camera.position.set(c.tx+c.d*ce*Math.sin(c.az),c.ty+c.d*Math.sin(c.el),c.tz+c.d*ce*Math.cos(c.az));camera.lookAt(c.tx,c.ty,c.tz);}
