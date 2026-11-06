@@ -184,7 +184,7 @@ dialog p{margin:0 0 10px}
    <div class="stage" id="stage">
     <canvas id="three" aria-label="3D view of the four rods and the ion's path; drag to rotate, scroll or pinch to zoom"></canvas>
     <div id="tags"></div>
-    <div class="endon" aria-hidden="true"><canvas id="endc"></canvas><span>Looking down the rods</span></div>
+    <div class="endon" aria-hidden="true"><canvas id="endc"></canvas><span>Looking down the rods: x rods +(U + V cos ωt), y rods −(U + V cos ωt)</span></div>
     <div class="status" aria-live="polite"><div class="s1" id="s1"></div><div class="s2" id="s2"></div></div>
     <div class="hint" id="hint">Drag to turn the rods. Scroll or pinch to zoom. Double-click to reset.</div>
    </div>
@@ -343,7 +343,7 @@ function phiNow(){var w=2*Math.PI*P.f;return S.U+S.V*Math.cos(w*TAU+2*P.ph);}
 function updateScene(){var v=vac(),mx=Math.max(1e-9,S.U+S.V),s=Math.max(-1,Math.min(1,phiNow()/mx));
   var cp=new T3.Color(css('--plus')),cm=new T3.Color(css('--minus')),base=new T3.Color(v?0xaab6c1:0xe3e8ec),cx=Math.sin(CAM.az)*Math.cos(CAM.el),cyv=Math.sin(CAM.el);
   rods.forEach(function(m,k){var near=(m.position.x*cx+m.position.y*cyv)>0.2,op=near?(v?0.22:0.18):1;m.material.transparent=op<1;m.material.opacity=op;m.material.depthWrite=op===1;outlines[k].visible=!v&&!near;
-    var sign=m.userData.pair==='x'?s:-s,c=base.clone().lerp(sign>0?cp:cm,Math.abs(sign)*(v?0.25:0.5));m.material.color.copy(c);if(v)m.material.emissive=(sign>0?cp:cm).clone().multiplyScalar(Math.abs(sign)*0.35);});
+    m.material.color.copy(base);if(v)m.material.emissive=new T3.Color(0);});
   tubes.forEach(function(t,k){var o=t.userData.o,i=idxAt(o,TAU),seg=Math.min(t.userData.seg,Math.ceil(i/t.userData.step));t.geometry.setDrawRange(0,seg*8*6);var p=o.pts[i];heads[k].position.set(p[0],p[1],p[2]*LD);
     marks[k].visible=marks[k].userData.lost&&i>=o.pts.length-1;});}
 function placeCam(){var c=CAM,ce=Math.cos(c.el);camera.position.set(c.tx+c.d*ce*Math.sin(c.az),c.ty+c.d*Math.sin(c.el),c.tz+c.d*ce*Math.cos(c.az));camera.lookAt(c.tx,c.ty,c.tz);}
@@ -365,11 +365,11 @@ function tags(){var box=$('tags');if(!TAGS.length){var c=1+RR,o=RR+0.55;
      ['x','axis',new T3.Vector3(5.1,0,ZA)],['y','axis',new T3.Vector3(0,5.1,ZA)],['z','axis',new T3.Vector3(0.45,0.45,ZA+1.5)]].forEach(function(t){var d=document.createElement('div');d.className='tag'+(t[1]?' '+t[1]:'');
       if(t[1]==='rod')d.innerHTML=t[0]+' rod <span class="sg"></span>';else d.textContent=t[0];box.appendChild(d);TAGS.push({el:d,p:t[2],pair:t[3]});});}
   var w=$('stage').clientWidth,h=$('stage').clientHeight,s=phiNow();TAGS.forEach(function(t){var v=t.p.clone().project(camera);t.el.style.left=((v.x+1)/2*w)+'px';t.el.style.top=((1-v.y)/2*h)+'px';t.el.style.display=v.z<1?'':'none';
-    if(t.pair){var pos=(t.pair==='x')===(s>=0);var sg=t.el.querySelector('.sg');sg.textContent=pos?'+':'−';sg.style.color=pos?css('--plus'):css('--minus');}});}
+    if(t.pair){var pos=t.pair==='x';var sg=t.el.querySelector('.sg');sg.textContent=pos?'+':'−';sg.style.color=pos?css('--plus'):css('--minus');}});}
 /* ---------- end-on window: the ion's x–y position seen down the axis ---------- */
 function drawEnd(){var cv=$('endc'),r=cv.getBoundingClientRect();if(!r.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);if(cv.width!==Math.round(r.width*dpr)){cv.width=r.width*dpr;cv.height=r.height*dpr;}
   var c=cv.getContext('2d'),W=r.width,cx=W/2,cy=W/2,sc=W/(2*(1+2*RR)+1.4),s=phiNow(),pl=css('--plus'),mi=css('--minus'),ink=css('--ink'),mut=css('--muted');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,W);
-  [[1+RR,0,'x'],[-(1+RR),0,'x'],[0,1+RR,'y'],[0,-(1+RR),'y']].forEach(function(p){var pos=(p[2]==='x')===(s>=0);c.beginPath();c.arc(cx+p[0]*sc,cy-p[1]*sc,RR*sc,0,7);c.fillStyle=pos?pl:mi;c.globalAlpha=0.22;c.fill();c.globalAlpha=1;c.strokeStyle=pos?pl:mi;c.lineWidth=1.5;c.stroke();
+  [[1+RR,0,'x'],[-(1+RR),0,'x'],[0,1+RR,'y'],[0,-(1+RR),'y']].forEach(function(p){var pos=p[2]==='x';c.beginPath();c.arc(cx+p[0]*sc,cy-p[1]*sc,RR*sc,0,7);c.fillStyle=pos?pl:mi;c.globalAlpha=0.22;c.fill();c.globalAlpha=1;c.strokeStyle=pos?pl:mi;c.lineWidth=1.5;c.stroke();
     c.fillStyle=pos?pl:mi;c.font='600 15px '+css('--ui');c.textAlign='center';c.fillText(pos?'+':'−',cx+p[0]*sc,cy-p[1]*sc+5);});
   c.strokeStyle=mut;c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(6,cy);c.lineTo(W-6,cy);c.moveTo(cx,W-6);c.lineTo(cx,6);c.stroke();c.setLineDash([]);
   c.fillStyle=ink;c.font='italic 600 14px '+css('--math');c.textAlign='left';c.fillText('x',W-14,cy-6);c.fillText('y',cx+6,14);
@@ -576,7 +576,7 @@ function boot(){initThree();bindDiag();bindCtl();bindTime();
   update(true);resize();if(location.hash.indexOf('vacuum')>=0)setLook('vacuum');requestAnimationFrame(loop);if(location.hash.indexOf('challenge')>=0)setMode('challenge');
   window.addEventListener('hashchange',function(){setMode(location.hash.indexOf('challenge')>=0?'challenge':'journey');});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window.__q={skip:function(){if(PLAY)TAU=TMAX*0.9999;},get PLAY(){return PLAY;},get TAU(){return TAU;},get TMAX(){return TMAX;},S:S,G:G,get R(){return R;},get ION(){return ION;},update:update,setMode:setMode,fire:fire,nextRound:nextRound,setTau:function(f){PLAY=false;TAU=f*TMAX;DIRTY=true;tread();drawPaths();}};
+window.__q={rodCols:function(){return rods.map(function(m){return '#'+m.material.color.getHexString();}).join(' ');},skip:function(){if(PLAY)TAU=TMAX*0.9999;},get PLAY(){return PLAY;},get TAU(){return TAU;},get TMAX(){return TMAX;},S:S,G:G,get R(){return R;},get ION(){return ION;},update:update,setMode:setMode,fire:fire,nextRound:nextRound,setTau:function(f){PLAY=false;TAU=f*TMAX;DIRTY=true;tread();drawPaths();}};
 })();
 
 </script>
