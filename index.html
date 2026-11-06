@@ -91,7 +91,7 @@ html[data-look="vacuum"] .stars{color:#F2C14E}
 .cond .cn{font-size:12.5px;color:var(--muted);line-height:1.4}
 .seg button:disabled{opacity:.4;cursor:not-allowed}
 #spd button{padding:3px 9px;font-size:12.5px}
-@media (max-width:900px){.tline{flex-wrap:wrap;row-gap:6px}.tline input[type=range]{min-width:140px}#spd{order:5}.tline .tread{min-width:0;font-size:12px;order:4;flex:1;text-align:right}}
+
 .veil{display:grid;place-items:center;height:200px;border:1px dashed var(--rule);border-radius:var(--r);color:var(--muted);font-size:14px;text-align:center;padding:16px}
 .tag{position:absolute;font-size:12px;color:var(--muted);pointer-events:none;transform:translate(-50%,-50%);white-space:nowrap}
 .tag b{font-weight:600}
@@ -142,31 +142,51 @@ dialog::backdrop{background:rgba(10,20,30,.45)}
 dialog h3{margin:18px 0 6px;font-size:16px}
 dialog p{margin:0 0 10px}
 /* phone and narrow screens */
-@media (max-width:900px){
- .top{flex-wrap:wrap;gap:10px;padding:10px 14px}
- .title{order:3;flex-basis:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
- .title h1{font-size:17px;white-space:nowrap}
- .parts{flex-wrap:nowrap}.parts button{white-space:nowrap}
- .brand b{font-size:13px}.brand span{font-size:11px}
- .status{left:14px;top:10px;right:14px}.status .s2{font-size:12.5px}.hint{display:none}
- .app{max-width:100vw;overflow-x:hidden}
- .top>*{min-width:0}
- .main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr);overflow:hidden}
- .endon{left:10px;bottom:10px;width:112px}.endon canvas{width:112px;height:112px}.endon span{font-size:10.5px}
- .stage,.tline,.tabs,.phonebody{grid-column:1;border-right:0}
- .stage{grid-row:1;height:44vh;min-height:250px}.tline{grid-row:2}.tabs{grid-row:3}
- .phonebody{grid-row:4;display:block}
- .tline{padding:8px 14px}
- .tabs{display:flex;gap:4px;padding:8px 14px;border-top:1px solid var(--rule);background:var(--panel);overflow-x:auto}
- .tabs button{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:5px 13px;font-size:13.5px;white-space:nowrap;cursor:pointer}
- .tabs button[aria-selected="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
- .phonebody{min-height:0;overflow:auto;background:var(--panel)}
- .paths,.sec{display:none}
- .phonebody [data-pane].on{display:block}
- .right{display:contents}
- .status .s1{font-size:18px}
-}
+
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+
+/* ===== small screens: same page, arranged to fit ===== */
+.fsbtn{display:none;position:absolute;top:10px;right:10px;z-index:6;width:36px;height:36px;border-radius:50%;border:1px solid var(--rule);background:color-mix(in srgb,var(--panel) 85%,transparent);color:var(--ink);font-size:17px;line-height:1;cursor:pointer}
+#cap .status{position:static;padding:10px 14px 12px;background:var(--panel);border-bottom:1px solid var(--rule);pointer-events:auto}
+#cap .status .s1{font-size:17px}#cap .status .s2{font-size:13px}
+/* phones held upright, narrow windows: one page that scrolls */
+@media (max-width:900px) and (orientation:portrait),(max-width:700px) and (min-height:541px){
+ html,body{height:auto;min-height:100%}
+ .app{height:auto;display:block;max-width:100vw;overflow-x:clip}
+ .top{flex-wrap:wrap;gap:8px 10px;padding:10px 14px}.top>*{min-width:0}
+ .title{order:3;flex-basis:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.title h1{font-size:17px;white-space:nowrap}
+ .parts{flex-wrap:nowrap}.parts button{white-space:nowrap}.brand b{font-size:13px}.brand span{font-size:11px}
+ .main{display:block;overflow:visible}.left{display:block}
+ .stage{height:42vh;min-height:240px;max-height:470px;border-right:0}.hint{display:none}
+ .fsbtn{display:block}
+ .endon,.slice{left:8px;bottom:8px}.endon{width:104px}.endon canvas{width:104px;height:104px}.endon span{display:none}.slice{width:118px}.slice canvas{width:118px;height:96px}.slice span{display:none}
+ .tabs{display:flex;position:sticky;top:0;z-index:20;gap:4px;padding:8px 14px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--panel);overflow-x:auto}
+ .tabs button{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:5px 13px;font-size:13.5px;white-space:nowrap;cursor:pointer}
+ .tabs button[data-t="ctl"]{order:1}.tabs button[data-t="stab"]{order:2}.tabs button[data-t="paths"]{order:3}.tabs button[data-t="eq"]{order:4}
+ .phonebody{display:flex;flex-direction:column;overflow:visible;background:var(--panel);padding-bottom:132px}
+ .right{display:contents}
+ .phonebody .paths,.phonebody .sec{display:block}
+ .phonebody [data-pane="ctl"]{order:1}.phonebody [data-pane="stab"]{order:2}.phonebody .paths{order:3;border-bottom:1px solid var(--rule)}.phonebody [data-pane="eq"]{order:4}
+ .paths{padding:10px 14px 12px}.paths canvas{height:190px}.sec{padding:14px}
+ .tline{position:fixed;left:0;right:0;bottom:0;z-index:30;flex-wrap:wrap;row-gap:6px;gap:10px;padding:8px 14px calc(8px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--rule);border-right:0;background:var(--panel);box-shadow:0 -6px 18px rgba(0,0,0,.08)}
+ .tline input[type=range]{flex:1 1 calc(100% - 64px);min-width:0;order:2}.play{order:1}#spd{order:3}#spd button{padding:3px 10px}.tline .tread{min-width:0;font-size:12.5px;order:4;flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+/* phones turned sideways: side by side */
+@media (orientation:landscape) and (max-height:540px){
+ .top{flex-wrap:nowrap;gap:10px;padding:6px 12px}.brand span{display:none}.brand b{font-size:12px}
+ .title{min-width:0;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}.title h1{font-size:15px;white-space:nowrap}.parts{flex-wrap:nowrap}.parts button{white-space:nowrap;font-size:12px;padding:3px 9px}
+ .seg button{padding:3px 9px;font-size:12px}.btn{padding:4px 10px;font-size:12.5px}
+ .main{grid-template-columns:minmax(0,1fr) min(46vw,390px);grid-template-rows:minmax(0,1fr) auto}
+ .left{display:contents}.stage{grid-column:1;grid-row:1}.tline{grid-column:1;grid-row:2;padding:6px 12px;gap:10px}.tline .tread{min-width:0;font-size:12px}
+ .tabs{display:none}
+ .phonebody{grid-column:2;grid-row:1/span 2;display:block;overflow-y:auto;min-height:0;background:var(--panel);border-left:1px solid var(--rule)}
+ .right{display:block;overflow:visible}.phonebody .paths,.phonebody .sec{display:block}.paths{border-right:0}.paths canvas{height:170px}
+ .status{left:12px;top:8px;right:56px}.status .s1{font-size:15px}.status .s2{font-size:12px;max-height:3.2em;overflow:hidden}.hint{display:none}
+ .fsbtn{display:block}
+ .endon{left:8px;bottom:8px;width:96px}.endon canvas{width:96px;height:96px}.endon span{display:none}.slice{left:8px;bottom:8px;width:110px}.slice canvas{width:110px;height:90px}.slice span{display:none}
+}
+/* full-screen 3D view (phones and tablets) */
+.stage.full{position:fixed !important;inset:0;z-index:60;height:auto !important;max-height:none !important;border:0}
 </style>
 </head>
 <body>
@@ -183,12 +203,14 @@ dialog p{margin:0 0 10px}
  <div class="main">
   <section class="left" aria-label="The quadrupole and the ion's path">
    <div class="stage" id="stage">
+    <button class="fsbtn" id="fsBtn" aria-label="Show the 3D view full screen">⤢</button>
     <canvas id="three" aria-label="3D view of the four rods and the ion's path; drag to rotate, scroll or pinch to zoom"></canvas>
     <div id="tags"></div>
     <div class="endon" aria-hidden="true"><canvas id="endc"></canvas><span>Looking down the rods: x rods +(U + V cos ωt), y rods −(U + V cos ωt)</span></div>
     <div class="status" aria-live="polite"><div class="s1" id="s1"></div><div class="s2" id="s2"></div></div>
     <div class="hint" id="hint">Drag to turn the rods. Scroll or pinch to zoom. Double-click to reset.</div>
    </div>
+   <div id="cap"></div>
    <div class="tline">
     <button class="play" id="play" aria-label="Fly the ion"><svg viewBox="0 0 16 16" aria-hidden="true"><path id="playIcon" d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg></button>
     <input type="range" id="scrub" min="0" max="1000" value="1000" aria-label="Position along the rods">
@@ -575,14 +597,26 @@ function setMode0(m){if(m===MODE)return;if(m==='challenge'){SJ={U:S.U,V:S.V};MOD
   else{SG={U:S.U,V:S.V};MODE='journey';document.documentElement.setAttribute('data-mode','journey');S.U=SJ.U;S.V=SJ.V;S.diag='aq';$('tabCtl').textContent='Settings';update(false);}
   document.querySelectorAll('.parts button[data-mode]').forEach(function(b){if(b.dataset.mode===m)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   history.replaceState(null,'',m==='challenge'?'#challenge':'#');}
-function panes(){var narrow=window.matchMedia('(max-width:900px)').matches;document.querySelectorAll('[data-pane]').forEach(function(p){p.classList.toggle('on',!narrow||p.dataset.pane===S.pane);});
-  document.querySelectorAll('.tabs button').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.t===S.pane));});}
+/* ===== layout for every screen size ===== */
+var SCROLLQ='(max-width:900px) and (orientation:portrait),(max-width:700px) and (min-height:541px)',LANDQ='(orientation:landscape) and (max-height:540px)',EQCLOSED=false;
+function layoutKind(){return window.matchMedia(SCROLLQ).matches?'scroll':(window.matchMedia(LANDQ).matches?'land':'desk');}
+function panes(){var k=layoutKind(),st=document.querySelector('.status'),cap=$('cap'),stage=$('stage');
+  document.querySelectorAll('[data-pane]').forEach(function(p){p.classList.add('on');});
+  if(k==='scroll'){if(st.parentNode!==cap)cap.appendChild(st);if(!EQCLOSED){EQCLOSED=true;var d=document.querySelector('details.eqs');if(d)d.removeAttribute('open');}}
+  else if(st.parentNode!==stage)stage.appendChild(st);
+  if(k==='desk'&&stage.classList.contains('full'))toggleFull(false);
+  document.querySelectorAll('.tabs button').forEach(function(b){b.setAttribute('aria-selected','false');});}
+function jumpTo(t){var el=document.querySelector('.phonebody [data-pane="'+t+'"]:not([style*="display: none"])');var all=[].slice.call(document.querySelectorAll('.phonebody [data-pane="'+t+'"]')).filter(function(x){return x.offsetParent!==null;});el=all[0]||el;if(!el)return;
+  var tabsH=document.querySelector('.tabs').offsetHeight||0,y=el.getBoundingClientRect().top+window.scrollY-tabsH-4;window.scrollTo({top:y,behavior:'smooth'});
+  document.querySelectorAll('.tabs button').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.t===t));});}
+function toggleFull(on){var s=$('stage'),b=$('fsBtn');if(on===undefined)on=!s.classList.contains('full');s.classList.toggle('full',on);b.textContent=on?'✕':'⤢';b.setAttribute('aria-label',on?'Close the full-screen view':'Show the 3D view full screen');document.body.style.overflow=on?'hidden':'';setTimeout(function(){resize();DIRTY=true;},30);}
 function boot(){initThree();bindDiag();bindCtl();bindTime();
   document.querySelectorAll('#spd button').forEach(function(b){b.addEventListener('click',function(){SPD=+b.dataset.s;document.querySelectorAll('#spd button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});});});
   $('lookA').addEventListener('click',function(){setLook('figure');});$('lookB').addEventListener('click',function(){setLook('vacuum');});
   $('guideBtn').addEventListener('click',function(){$('guide').showModal();});
   document.querySelectorAll('.parts button[data-mode]').forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.mode);});});
-  document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){S.pane=b.dataset.t;panes();if(S.pane==='paths')drawPaths();});});
+  document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){jumpTo(b.dataset.t);});});$('fsBtn').addEventListener('click',function(){toggleFull();});
+  window.addEventListener('orientationchange',function(){setTimeout(function(){panes();resize();drawPaths();DIRTY=true;},250);});
   var ro=new ResizeObserver(function(){resize();drawPaths();DIRTY=true;});ro.observe($('stage'));ro.observe($('pathc'));
   window.addEventListener('resize',function(){panes();});panes();
   update(true);resize();if(location.hash.indexOf('vacuum')>=0)setLook('vacuum');requestAnimationFrame(loop);setMode(hashMode());
