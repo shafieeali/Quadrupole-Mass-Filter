@@ -61,7 +61,8 @@ button,input,select{font:inherit;color:inherit}
 .tag.rod .sg{display:inline-block;width:1.1em;text-align:center}
 .tag.axis{font-family:var(--math);font-style:italic;font-size:17px;color:var(--ink);font-weight:600}
 /* challenge */
-html[data-mode="challenge"] [data-only="journey"],html[data-mode="journey"] [data-only="challenge"]{display:none !important}
+html:not([data-mode="journey"]) [data-only="journey"],html:not([data-mode="challenge"]) [data-only="challenge"],html[data-mode="journey"] [data-only="x"],html[data-mode="challenge"] [data-only="x"]{display:none !important}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .gtitle{font-size:19px;font-weight:600;letter-spacing:-.01em;margin:2px 0 4px}
 .gmeta{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
 .stars{color:#C98A0C;font-weight:600;font-size:14px}
@@ -174,7 +175,7 @@ dialog p{margin:0 0 10px}
   <div class="brand"><b>Interactive Chemistry</b><span>Ali Shafiee, University of Florida</span></div>
   <div class="title"><h1>Quadrupole mass filter</h1>
    <nav class="parts" aria-label="Parts of this module">
-    <button disabled>The instrument</button><button disabled>The field</button><button data-mode="journey" aria-current="page">One ion’s journey</button><button disabled>Stability</button><button data-mode="challenge">Mass filter challenge</button><button disabled>Scanning</button><button disabled>Triple quad</button>
+    <button data-mode="field">The rods and the field</button><button data-mode="journey" aria-current="page">One ion’s journey</button><button data-mode="mix">Filtering a mixture</button><button data-mode="scan">Scanning</button><button data-mode="tq">Triple quad</button><button data-mode="challenge">Mass filter challenge</button>
    </nav></div>
   <div class="seg" role="group" aria-label="Design direction"><button id="lookA" aria-pressed="true">A: Figure</button><button id="lookB" aria-pressed="false">B: Vacuum</button></div>
   <button class="btn" id="guideBtn">Guide</button>
@@ -203,6 +204,7 @@ dialog p{margin:0 0 10px}
     <div class="sec" data-pane="stab"><div class="dhead"><h2>Stability diagram <small>drag the dot</small></h2><div class="seg" role="group" aria-label="Diagram axes"><button id="dAQ" aria-pressed="true">a–q</button><button id="dUV" aria-pressed="false">U–V</button></div></div>
      <svg id="aq" viewBox="0 0 360 270" role="img" aria-label="Stability diagram with the working point"></svg><div class="veil" id="veil" hidden>Make your guess first. The diagram appears after the ions fly.</div><p class="note" id="dnote"></p></div>
     <div class="sec" data-pane="ctl" data-only="challenge" id="game"></div>
+    <div class="sec" data-pane="ctl" data-only="x" id="ctlX"></div>
     <div class="sec" data-pane="ctl" data-only="journey" id="ctlJ">
      <div class="ctl"><div class="lab"><span>Ion, m/z <small class="note">tap the number to type any mass</small></span><span class="val" data-k="m" tabindex="0"></span></div>
       <div class="chips" id="mchips"><button data-m="27">27</button><button data-m="28">28</button><button data-m="29">29</button></div>
@@ -218,10 +220,18 @@ dialog p{margin:0 0 10px}
  </div>
 </div>
 <dialog id="guide"><form method="dialog" style="float:right;margin:-8px -10px 0 0"><button class="btn">Close</button></form>
- <h3 style="margin-top:0">One ion’s journey</h3>
+ <h3 style="margin-top:0">The rods and the field</h3>
+ <p>Four parallel rods; opposite rods are connected. The x rods get φ<sub>0</sub> = U + V cos ωt and the y rods −φ<sub>0</sub> (slide 9). Inside, the potential is φ = φ<sub>0</sub>(x² − y²)/r<sub>0</sub>², so the field grows linearly with distance from the axis (slide 6) and the equipotentials are saddles (slide 7). The RF runs slowly in this part, about 5 seconds per cycle, so the rods and the potential slice change color gradually as the polarity reverses. The two plots show the potential along x and along y: one direction confines a positive ion while the other pushes it out, and half a cycle later they swap. Send an ion through with DC only, RF only, or both to see slide 10: DC alone drags the ion into the negative y rods, RF alone makes it oscillate. The end view can show round rods (real) or hyperbolic rods (ideal, slide 8).</p>
+ <h3>One ion’s journey</h3>
  <p>Four rods carry a DC voltage <i>U</i> plus an RF voltage <i>V</i> cos ω<i>t</i>. Opposite rods are connected, so the potential between the two pairs is Φ₀ = <i>U</i> + <i>V</i> cos ω<i>t</i>. Only ions of the right m/z have a stable path and reach the detector.</p>
  <p>Choose an ion, set <i>U</i> and <i>V</i>, and press play. The path is calculated from the equations of motion, not drawn by hand. Too light, and the AC field throws the ion into the x rods; too heavy, and the DC field drags it into the y rods.</p>
  <p>The dot on the stability diagram is the ion’s working point (<i>q</i>, <i>a</i>). Inside the shaded region the motion is stable in both x and y. Drag the dot to change <i>U</i> and <i>V</i> directly.</p>
+ <h3>Filtering a mixture</h3>
+ <p>Several kinds of ions enter together. They all feel the same U and V, but each has its own a and q, so each sits at its own point on the same line through the origin of the diagram (slides 20, 23–24). Move U and V, or tap “Keep only” for one ion: lighter ions are thrown out by the AC field and hit x rods; heavier ones are dragged off by the DC field and hit y rods. With U = 0 every ion with q below 0.908 passes (RF-only mode).</p>
+ <h3>Scanning</h3>
+ <p>U and V rise together, and the working point climbs the scan line through each ion’s stable region in turn, giving one peak per ion (slides 18–21). With a fixed U/V the scan line is straight and passes through the origin: a steeper line cuts a thinner slice of each region, so peaks are narrower and resolution higher, but fewer ions pass (slides 22, 25). At the tip, a/q = 0.336 and U/V = 0.168 (slide 26). With a fixed U/V each peak’s width grows in proportion to m, so R = m/Δm stays the same at every mass. Instruments normally raise U/V slightly as the mass increases so that every peak is about 1 m/z wide (unit resolution); then R grows in proportion to m, as on slide 4. Both modes are available. With U = 0 (RF only) there are no peaks at all (slide 27). Peak shapes come from flying a batch of ions with different starting positions and RF phases at every step of the scan.</p>
+ <h3>Triple quad</h3>
+ <p>Q1 is a mass filter set to pass only the precursor (here beauverolide, [M+H]⁺ m/z 488). q2 is RF only, an ion guide filled with collision gas: ions collide with the gas and fragment (CID). Q3 scans like a single quadrupole, so each fragment reaches the detector in turn: a product ion scan (slides 28–30). Switch the gas off to see q2 simply guide the precursor through. The fragments and their intensities come from the MS² example on slide 52, which was recorded on an ion trap; a triple quad gives a similar set of fragments, with intensities that depend on the collision energy. The triple quad’s peaks use the ideal stability windows.</p>
  <h3>Settings used</h3>
  <p>Rod spacing <i>r</i>₀ = 4.0 mm, RF frequency 1.00 MHz, rod length 15 cm, ion energy 5 eV, singly charged ions starting 0.1 <i>r</i>₀ off the axis. In the 3D view the rods are shortened to fit the screen.</p>
  <p class="note">Equations follow the lecture: a = 4eU/(m r₀²ω²), q = 2eV/(m r₀²ω²), where Φ₀ = U + V cos ωt is the potential between the rod pairs. Stability limits are the Mathieu characteristic curves (apex a = 0.237, q = 0.706; edge q = 0.908 at a = 0).</p>
@@ -276,14 +286,14 @@ function fly(m,U,V){var K=Kf(m),a=4*U/K,q=2*V/K,w=2*Math.PI*P.f,vz=Math.sqrt(2*P
     if(Math.abs(x)>1||Math.abs(y)>1){fate=Math.abs(x)>1?'x':'y';pts.push([Math.max(-1,Math.min(1,x)),Math.max(-1,Math.min(1,y)),z]);break;}pts.push([x,y,z]);}
   return {m:m,a:a,q:q,pts:pts,fate:fate,cycles:(xi-P.ph)/Math.PI,total:span/Math.PI,tus:(xi-P.ph)*2/w*1e6,T:T,h:h,reg:region(a,q)};}
 var R={},ION=[];
-function compute(){if(MODE==='journey'){ION=(S.cmp?[27,28,29]:[S.m]).map(function(m){return fly(m,S.U,S.V);});R=ION.filter(function(o){return o.m===S.m;})[0]||fly(S.m,S.U,S.V);}
+function compute0(){if(MODE==='journey'){ION=(S.cmp?[27,28,29]:[S.m]).map(function(m){return fly(m,S.U,S.V);});R=ION.filter(function(o){return o.m===S.m;})[0]||fly(S.m,S.U,S.V);}
   else{ION=G.ions.map(function(io,i){var o=fly(io.m,S.U,S.V);o.i=i;o.f=io.f;return o;});R=ION[G.target]||ION[0];}}
 var TAU=1,PLAY=false,TMAX=1;
 function tmax(){return Math.max.apply(null,ION.map(function(o){return o.fate==='pass'?o.T:o.T*(o.cycles/o.total);}));}
 function idxAt(o,tau){var w=2*Math.PI*P.f,n=Math.floor((w*tau/2)/o.h);return Math.max(0,Math.min(o.pts.length-1,n));}
 var ICOL={27:'#7C5CD6',29:'#C2417A'};
 var GPAL={figure:['#0B7A5C','#7C5CD6','#C2417A','#B26B00','#2B6CB0','#4A5560'],vacuum:['#7DE3C3','#B49CFF','#FF7AB6','#FFC266','#7FB8FF','#C9D3DC']};
-function ionColor(o){if(MODE==='challenge')return GPAL[vac()?'vacuum':'figure'][o.i%6];if(!S.cmp)return o.fate==='pass'?css('--ion'):css('--lost');return o.m===28?css('--ion'):ICOL[o.m];}
+function ionColor0(o){if(MODE==='challenge')return GPAL[vac()?'vacuum':'figure'][o.i%6];if(!S.cmp)return o.fate==='pass'?css('--ion'):css('--lost');return o.m===28?css('--ion'):ICOL[o.m];}
 /* ---------- formatting ---------- */
 function f3(v){return v.toFixed(3);}function fV(v){return (v<100?v.toFixed(2):v.toFixed(1))+' V';}
 function sup(s){return String(s).split('').map(function(c){return '⁰¹²³⁴⁵⁶⁷⁸⁹'['0123456789'.indexOf(c)]||'⁻';}).join('');}
@@ -294,7 +304,7 @@ function why(o){var lab='m/z '+o.m;if(o.fate==='pass'){if(o.reg.x&&o.reg.y)retur
   var d=o.fate==='x'?'Unstable in x: too light, so the AC field throws it outward.':'Unstable in y: too heavy, so the DC field drags it outward.';
   if(o.reg.x&&o.reg.y)d='Its working point is inside the stable region, but its oscillation is wider than the gap between the rods.';
   return [lab+' hits '+(o.fate==='x'?'an x rod':'a y rod'),'bad',d+' Lost after '+o.cycles.toFixed(1)+' RF cycles.'];}
-function status(){var s1=$('s1'),s2=$('s2');
+function status0(){var s1=$('s1'),s2=$('s2');
   if(MODE==='challenge'){s1.innerHTML=G.headline||'';s2.textContent=(G.state!=='flying'&&G.msg)?G.msg:(G.sub||'');return;}
   if(!S.cmp){var w=why(R);s1.innerHTML='<span class="'+w[1]+'">'+w[0]+'</span>';s2.textContent=w[2]+' Working point a = '+f3(R.a)+', q = '+f3(R.q)+'.';return;}
   s1.innerHTML=ION.map(function(o){return '<span style="color:'+ionColor(o)+'">'+o.m+'</span> '+(o.fate==='pass'?'passes':(o.fate==='x'?'hits x':'hits y'));}).join(', &nbsp;');
@@ -339,14 +349,14 @@ function buildPaths(){if(!scene)return;tubes.concat(heads,marks).forEach(functio
     var h=new T3.Mesh(new T3.SphereGeometry(main?0.24:0.2,20,14),new T3.MeshBasicMaterial({color:col}));scene.add(h);heads.push(h);
     var mk=new T3.Mesh(new T3.SphereGeometry(0.32,20,14),new T3.MeshBasicMaterial({color:new T3.Color(css('--red')),transparent:true,opacity:0.38}));mk.position.copy(pv[pv.length-1]);mk.visible=false;mk.userData.lost=o.fate!=='pass';scene.add(mk);marks.push(mk);});
   DIRTY=true;}
-function phiNow(){var w=2*Math.PI*P.f;return S.U+S.V*Math.cos(w*TAU+2*P.ph);}
-function updateScene(){var v=vac(),mx=Math.max(1e-9,S.U+S.V),s=Math.max(-1,Math.min(1,phiNow()/mx));
+function phiNow0(){var w=2*Math.PI*P.f;return S.U+S.V*Math.cos(w*TAU+2*P.ph);}
+function updateScene0(){var v=vac(),mx=Math.max(1e-9,S.U+S.V),s=Math.max(-1,Math.min(1,phiNow()/mx));
   var cp=new T3.Color(css('--plus')),cm=new T3.Color(css('--minus')),base=new T3.Color(v?0xaab6c1:0xe3e8ec),cx=Math.sin(CAM.az)*Math.cos(CAM.el),cyv=Math.sin(CAM.el);
   rods.forEach(function(m,k){var near=(m.position.x*cx+m.position.y*cyv)>0.2,op=near?(v?0.22:0.18):1;m.material.transparent=op<1;m.material.opacity=op;m.material.depthWrite=op===1;outlines[k].visible=!v&&!near;
     m.material.color=new T3.Color(m.userData.pair==='x'?(v?0xC9A07F:0xB77C5E):(v?0x95AAC2:0x6F8DB8));if(v)m.material.emissive=new T3.Color(0);});
-  tubes.forEach(function(t,k){var o=t.userData.o,i=idxAt(o,TAU),seg=Math.min(t.userData.seg,Math.ceil(i/t.userData.step));t.geometry.setDrawRange(0,seg*8*6);var p=o.pts[i];heads[k].position.set(p[0],p[1],p[2]*LD);
+  tubes.forEach(function(t,k){var o=t.userData.o,i=MODE==='field'?o.pts.length-1:idxAt(o,TAU),seg=Math.min(t.userData.seg,Math.ceil(i/t.userData.step));t.geometry.setDrawRange(0,seg*8*6);var p=o.pts[i];heads[k].position.set(p[0],p[1],p[2]*LD);
     marks[k].visible=marks[k].userData.lost&&i>=o.pts.length-1;});}
-function placeCam(){var c=CAM,ce=Math.cos(c.el);camera.position.set(c.tx+c.d*ce*Math.sin(c.az),c.ty+c.d*Math.sin(c.el),c.tz+c.d*ce*Math.cos(c.az));camera.lookAt(c.tx,c.ty,c.tz);}
+function placeCam(){if(MODE==='tq'&&!CAM.tq){CAM.tq=true;CAM.az=-1.5;CAM.el=0.28;CAM.d=30;CAM.tz=8.3;}else if(MODE!=='tq'&&CAM.tq){CAM.tq=false;CAM.az=-1.12;CAM.el=0.42;CAM.d=25;CAM.tz=6;}var c=CAM,ce=Math.cos(c.el);camera.position.set(c.tx+c.d*ce*Math.sin(c.az),c.ty+c.d*Math.sin(c.el),c.tz+c.d*ce*Math.cos(c.az));camera.lookAt(c.tx,c.ty,c.tz);}
 function resize(){var st=$('stage'),w=st.clientWidth,h=st.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w/h<1.1?48:32;camera.updateProjectionMatrix();DIRTY=true;}
 function bindControls(cv){var pts={},last=null,pinch=0;
   cv.addEventListener('pointerdown',function(e){cv.setPointerCapture(e.pointerId);pts[e.pointerId]=[e.clientX,e.clientY];last=[e.clientX,e.clientY];$('hint').style.opacity=0;});
@@ -359,15 +369,15 @@ function bindControls(cv){var pts={},last=null,pinch=0;
   cv.addEventListener('dblclick',function(){CAM.az=-1.12;CAM.el=0.42;CAM.d=25;DIRTY=true;});}
 /* ---------- labels that stay readable from any angle ---------- */
 var TAGS=[];
-function tags(){var box=$('tags');if(!TAGS.length){var c=1+RR,o=RR+0.55;
+function tags(){if(MODE==='tq'){TAGS.forEach(function(t){t.el.style.display='none';});return;}TQTAGS.forEach(function(t){t.el.style.display='none';});var box=$('tags');if(!TAGS.length){var c=1+RR,o=RR+0.55;
     [['ion source','',new T3.Vector3(0,-1.9,-2.4)],['detector','',new T3.Vector3(0,-2.2,LD+2.6)],
      ['x','rod',new T3.Vector3(c+o,0,LD-0.4),'x'],['x','rod',new T3.Vector3(-c-o,0,LD-0.4),'x'],['y','rod',new T3.Vector3(0,c+o,LD-0.4),'y'],['y','rod',new T3.Vector3(0,-c-o,LD-0.4),'y'],
      ['x','axis',new T3.Vector3(5.1,0,ZA)],['y','axis',new T3.Vector3(0,5.1,ZA)],['z','axis',new T3.Vector3(0.45,0.45,ZA+1.5)]].forEach(function(t){var d=document.createElement('div');d.className='tag'+(t[1]?' '+t[1]:'');
       if(t[1]==='rod')d.innerHTML=t[0]+' rod <span class="sg"></span>';else d.textContent=t[0];box.appendChild(d);TAGS.push({el:d,p:t[2],pair:t[3]});});}
   var w=$('stage').clientWidth,h=$('stage').clientHeight,s=phiNow();TAGS.forEach(function(t){var v=t.p.clone().project(camera);t.el.style.left=((v.x+1)/2*w)+'px';t.el.style.top=((1-v.y)/2*h)+'px';t.el.style.display=v.z<1?'':'none';
-    if(t.pair){var pos=t.pair==='x';var sg=t.el.querySelector('.sg');sg.textContent=pos?'+':'−';sg.style.color=pos?css('--plus'):css('--minus');}});}
+    if(t.pair){var pos=MODE==='field'?((t.pair==='x')===(phiNow()>=0)):t.pair==='x';var sg=t.el.querySelector('.sg');sg.textContent=pos?'+':'−';sg.style.color=pos?css('--plus'):css('--minus');}});}
 /* ---------- end-on window: the ion's x–y position seen down the axis ---------- */
-function drawEnd(){var cv=$('endc'),r=cv.getBoundingClientRect();if(!r.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);if(cv.width!==Math.round(r.width*dpr)){cv.width=r.width*dpr;cv.height=r.height*dpr;}
+function drawEnd0(){var cv=$('endc'),r=cv.getBoundingClientRect();if(!r.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);if(cv.width!==Math.round(r.width*dpr)){cv.width=r.width*dpr;cv.height=r.height*dpr;}
   var c=cv.getContext('2d'),W=r.width,cx=W/2,cy=W/2,sc=W/(2*(1+2*RR)+1.4),s=phiNow(),pl=css('--plus'),mi=css('--minus'),ink=css('--ink'),mut=css('--muted');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,W);
   [[1+RR,0,'x'],[-(1+RR),0,'x'],[0,1+RR,'y'],[0,-(1+RR),'y']].forEach(function(p){var pos=p[2]==='x';c.beginPath();c.arc(cx+p[0]*sc,cy-p[1]*sc,RR*sc,0,7);c.fillStyle=pos?pl:mi;c.globalAlpha=0.22;c.fill();c.globalAlpha=1;c.strokeStyle=pos?pl:mi;c.lineWidth=1.5;c.stroke();
     c.fillStyle=pos?pl:mi;c.font='600 15px '+css('--ui');c.textAlign='center';c.fillText(pos?'+':'−',cx+p[0]*sc,cy-p[1]*sc+5);});
@@ -378,7 +388,7 @@ function drawEnd(){var cv=$('endc'),r=cv.getBoundingClientRect();if(!r.width)ret
     var p=o.pts[n];c.beginPath();c.arc(cx+p[0]*sc,cy-p[1]*sc,3.4,0,7);c.fillStyle=col;c.fill();
     if(o.fate!=='pass'&&n>=o.pts.length-1){c.strokeStyle=css('--red');c.lineWidth=2;var X=cx+p[0]*sc,Y=cy-p[1]*sc;c.beginPath();c.moveTo(X-5,Y-5);c.lineTo(X+5,Y+5);c.moveTo(X+5,Y-5);c.lineTo(X-5,Y+5);c.stroke();}});}
 /* ---------- path traces x(z), y(z) ---------- */
-function drawPaths(){var cv=$('pathc'),r=cv.getBoundingClientRect();if(!r.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);cv.width=r.width*dpr;cv.height=r.height*dpr;var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+function drawPaths0(){var cv=$('pathc'),r=cv.getBoundingClientRect();if(!r.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);cv.width=r.width*dpr;cv.height=r.height*dpr;var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
   var W=r.width,H=r.height,L=34,Rt=10,rowH=(H-22)/2,mut=css('--muted'),rule=css('--rule'),many=ION.length>1;c.clearRect(0,0,W,H);
   ['x','y'].forEach(function(ax,k){var top=k*rowH+2,mid=top+rowH/2,amp=rowH/2-6;
     c.strokeStyle=rule;c.lineWidth=1;c.setLineDash([4,4]);c.beginPath();c.moveTo(L,mid-amp);c.lineTo(W-Rt,mid-amp);c.moveTo(L,mid+amp);c.lineTo(W-Rt,mid+amp);c.stroke();c.setLineDash([]);
@@ -392,7 +402,7 @@ function drawPaths(){var cv=$('pathc'),r=cv.getBoundingClientRect();if(!r.width)
 var AQ={L:44,R:14,T:14,B:36,W:360,H:270,qmax:1.0,amax:0.3},UVR=null;
 function qx(q){return AQ.L+q/AQ.qmax*(AQ.W-AQ.L-AQ.R);}function ay(a){return AQ.H-AQ.B-a/AQ.amax*(AQ.H-AQ.T-AQ.B);}
 function el(t,a,txt){var e=document.createElementNS('http://www.w3.org/2000/svg',t);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
-function diagIons(){if(MODE==='challenge')return ION.map(function(o){return {m:o.m,col:ionColor(o),lab:o.f+' '+o.m,me:o.i===G.target};});
+function diagIons(){if(MODE==='mix'||MODE==='scan'||MODE==='tq')return ION.map(function(o){return {m:o.m,col:ionColor(o),lab:(o.f||'')+' '+o.m,me:o.i===0};});if(MODE==='challenge')return ION.map(function(o){return {m:o.m,col:ionColor(o),lab:o.f+' '+o.m,me:o.i===G.target};});
   return (S.cmp?[27,28,29]:[S.m]).map(function(m){var o=ION.filter(function(x){return x.m===m;})[0]||{m:m,i:0};return {m:m,col:S.cmp?ionColor(o):css('--ion'),lab:'m/z '+m,me:m===S.m};});}
 function drawDiag(){$('veil').hidden=true;var guessing=MODE==='challenge'&&G.type==='guess'&&G.state!=='done';if(guessing)S.diag='aq';$('dUV').disabled=guessing;$('dUV').title=guessing?'Available after the ions fly':'';
   $('dAQ').setAttribute('aria-pressed',String(S.diag==='aq'));$('dUV').setAttribute('aria-pressed',String(S.diag==='uv'));
@@ -412,8 +422,8 @@ function drawAQ(){var s=$('aq');while(s.firstChild)s.removeChild(s.firstChild);v
   var hideP=MODE==='challenge'&&G.type==='guess'&&G.state!=='done';
   var slope=S.V>0?2*S.U/S.V:0,qe=Math.min(1,slope>0?0.3/slope:1);if(S.V>0&&!hideP)s.appendChild(el('line',{x1:qx(0),y1:ay(0),x2:qx(qe),y2:ay(qe*slope),stroke:mut,'stroke-dasharray':'4 4'}));
   if(hideP){[0.2,0.4,0.6,0.8].forEach(function(q){s.appendChild(el('line',{x1:qx(q),y1:ay(0),x2:qx(q),y2:ay(0.3),stroke:css('--rule'),'stroke-width':0.6}));});[0.05,0.1,0.15,0.2,0.25].forEach(function(v){s.appendChild(el('line',{x1:qx(0),y1:ay(v),x2:qx(1),y2:ay(v),stroke:css('--rule'),'stroke-width':0.6}));});return;}
-  var list=diagIons();list.forEach(function(it){if(it.me&&MODE==='journey')return;var K=Kf(it.m),a=4*S.U/K,q=2*S.V/K;if(q>1||a>0.3)return;s.appendChild(el('circle',{cx:qx(q),cy:ay(a),r:MODE==='challenge'?4:2.8,fill:MODE==='challenge'?it.col:'none',stroke:it.col,'stroke-width':1.2}));});
-  if(MODE==='journey'){inset(s);var ok=R.reg.x&&R.reg.y,cq=Math.min(1,R.q),ca=Math.min(0.3,R.a);s.appendChild(el('circle',{cx:qx(cq),cy:ay(ca),r:12,fill:'transparent',style:'cursor:grab'}));
+  var MULTI=MODE!=='journey'&&MODE!=='field',list=diagIons();list.forEach(function(it){if(it.me&&!MULTI)return;var K=Kf(it.m),a=4*S.U/K,q=2*S.V/K;if(q>1||a>0.3)return;s.appendChild(el('circle',{cx:qx(q),cy:ay(a),r:MULTI?4:2.8,fill:MULTI?it.col:'none',stroke:it.col,'stroke-width':1.2}));if(MULTI&&MODE!=='challenge')s.appendChild(el('text',{x:qx(q)+6,y:ay(a)-5,'font-size':10.5,'font-weight':600,fill:it.col},String(it.m)));});
+  if(!MULTI){inset(s);var ok=R.reg.x&&R.reg.y,cq=Math.min(1,R.q),ca=Math.min(0.3,R.a);s.appendChild(el('circle',{cx:qx(cq),cy:ay(ca),r:12,fill:'transparent',style:'cursor:grab'}));
     s.appendChild(el('circle',{cx:qx(cq),cy:ay(ca),r:5.5,fill:ok?ionc:red,stroke:css('--panel'),'stroke-width':1.5}));}
   else{var o=R,cq2=Math.min(1,o.q),ca2=Math.min(0.3,o.a);s.appendChild(el('circle',{cx:qx(cq2),cy:ay(ca2),r:8,fill:'none',stroke:ink,'stroke-width':1.5}));}}
 var ZB={q0:0.655,q1:0.755,a0:0.205,a1:0.247,x:66,y:14,w:150,h:96};
@@ -448,9 +458,9 @@ function drawUV(){var s=$('aq');while(s.firstChild)s.removeChild(s.firstChild);v
   if(S.V>0){var sl=S.U/S.V,ve=Math.min(Vm,sl>0?Um/sl:Vm);s.appendChild(el('line',{x1:X(0),y1:Y(0),x2:X(ve),y2:Y(ve*sl),stroke:mut,'stroke-dasharray':'4 4'}));}
   var px=Math.min(Vm,S.V),py=Math.min(Um,S.U),win=ION.filter(function(o){return o.reg.x&&o.reg.y;}),col=win.length===1?ionColor(win[0]):ink;
   s.appendChild(el('circle',{cx:X(px),cy:Y(py),r:12,fill:'transparent',style:'cursor:grab'}));s.appendChild(el('circle',{cx:X(px),cy:Y(py),r:6,fill:col,stroke:css('--panel'),'stroke-width':1.5}));}
-function bindDiag(){var s=$('aq'),down=false;function set(e){if(MODE==='challenge'&&G.lockUV)return;var pt=s.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var p=pt.matrixTransform(s.getScreenCTM().inverse());
+function bindDiag(){var s=$('aq'),down=false;function set(e){if(MODE==='challenge'&&G.lockUV)return;if(MODE==='scan'||MODE==='tq')return;var pt=s.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var p=pt.matrixTransform(s.getScreenCTM().inverse());
     if(S.diag==='uv'&&UVR){S.V=Math.max(0,Math.min(UVR.Vm,(p.x-AQ.L)/(AQ.W-AQ.L-AQ.R)*UVR.Vm));S.U=Math.max(0,Math.min(UVR.Um,(AQ.H-AQ.B-p.y)/(AQ.H-AQ.T-AQ.B)*UVR.Um));}
-    else{var q=Math.max(0,Math.min(1,(p.x-AQ.L)/(AQ.W-AQ.L-AQ.R)*AQ.qmax)),a=Math.max(0,Math.min(0.3,(AQ.H-AQ.B-p.y)/(AQ.H-AQ.T-AQ.B)*AQ.amax)),K=Kf(MODE==='challenge'?G.ions[G.target].m:S.m);S.V=q*K/2;S.U=a*K/4;}
+    else{var q=Math.max(0,Math.min(1,(p.x-AQ.L)/(AQ.W-AQ.L-AQ.R)*AQ.qmax)),a=Math.max(0,Math.min(0.3,(AQ.H-AQ.B-p.y)/(AQ.H-AQ.T-AQ.B)*AQ.amax)),K=Kf(MODE==='challenge'?G.ions[G.target].m:MODE==='mix'?MX.ions[0].m:S.m);S.V=q*K/2;S.U=a*K/4;}
     S.last='aq';update(false);}
   s.addEventListener('pointerdown',function(e){down=true;s.setPointerCapture(e.pointerId);set(e);});s.addEventListener('pointermove',function(e){if(down)set(e);});
   s.addEventListener('pointerup',function(){down=false;});s.addEventListener('pointercancel',function(){down=false;});
@@ -474,7 +484,7 @@ function bindCtl(){['m','U','V'].forEach(function(k){$('r_'+k).addEventListener(
 /* ---------- equations (lecture notation; the changing parameter in red) ---------- */
 function rd(on,s){return on?'<span class="r">'+s+'</span>':s;}
 function frac(t,b){return '<span class="frac"><span>'+t+'</span><span>'+b+'</span></span>';}
-function eqs(){var L=S.last,m=R.m,hU=L==='U'||L==='aq',hV=L==='V'||L==='aq',hm=L==='m';
+function eqs0(){var L=S.last,m=R.m,hU=L==='U'||L==='aq',hV=L==='V'||L==='aq',hm=L==='m';
   $('eqbox').innerHTML=
    '<div class="eq">Φ<sub>0</sub> = '+rd(hU,'<i>U</i>')+' + '+rd(hV,'<i>V</i>')+' cos ω<i>t</i><span class="n">= '+fV(S.U)+' + '+fV(S.V)+' cos ωt, with ω = 2π × '+(P.f/1e6).toFixed(2)+' MHz</span></div>'
    +'<div class="eq">'+frac('<i>d</i>²<i>x</i>','<i>dt</i>²')+' + '+frac('<i>e</i>',rd(hm,'<i>m</i>')+'<i>r</i><sub>0</sub>²')+'('+rd(hU,'<i>U</i>')+' + '+rd(hV,'<i>V</i>')+' cos ω<i>t</i>) <i>x</i> = 0<span class="n">and the same for y with a minus sign: a positive potential focuses x and defocuses y.</span></div>'
@@ -545,21 +555,23 @@ function gMoved(){if(G.state==='flying')return;if(G.state==='done'&&!G.won)G.sta
   ['U','V'].forEach(function(k){var v=document.querySelector('.val[data-g="'+k+'"]');if(v&&!v.querySelector('input'))v.textContent=fV(S[k]);var r=$('g_'+k);if(r)r.style.setProperty('--p',(r.value/40)+'%');});
   eqs();drawDiag();buildPaths();drawPaths();tread();DIRTY=true;}
 /* ---------- timeline ---------- */
-function tread(){var o=R,n=idxAt(o,TAU),cyc=Math.min(o.cycles,n*o.h/Math.PI),pre=MODE==='challenge'&&G.state==='ready';
+function tread0(){var o=R,n=idxAt(o,TAU),cyc=Math.min(o.cycles,n*o.h/Math.PI),pre=MODE==='challenge'&&G.state==='ready';
   $('tread').textContent=pre?'Ready to fire':(PLAY||TAU<TMAX?'RF cycle '+cyc.toFixed(1)+' of '+o.total.toFixed(1):(MODE==='challenge'?'Flight '+(TMAX*1e6).toFixed(1)+' µs':(o.fate==='pass'?'Transit '+o.tus.toFixed(1)+' µs, '+o.total.toFixed(1)+' RF cycles':'Lost after '+o.cycles.toFixed(1)+' RF cycles')));
   $('scrub').value=Math.round(TAU/TMAX*1000);$('scrub').style.setProperty('--p',(TAU/TMAX*100)+'%');$('scrub').disabled=pre;
   $('playIcon').setAttribute('d',PLAY?'M3 2h3.5v12H3zM9.5 2H13v12H9.5z':'M3 1.5v13l11-6.5z');$('play').setAttribute('aria-label',PLAY?'Pause':(MODE==='challenge'?'Fire ions':'Fly the ion'));}
-function bindTime(){$('play').addEventListener('click',function(){if(MODE==='challenge'&&G.state==='ready'){fire();return;}if(!PLAY&&TAU>=TMAX*0.999)TAU=0;PLAY=!PLAY;tread();});
-  $('scrub').addEventListener('input',function(){PLAY=false;TAU=this.value/1000*TMAX;DIRTY=true;tread();drawPaths();});}
+function bindTime(){$('play').addEventListener('click',function(){if(MODE==='field'){PLAY=!PLAY;tread();return;}if(MODE==='scan'||MODE==='tq'){if(!PLAY&&TAU>=1)TAU=0;PLAY=!PLAY;tread();return;}if(MODE==='challenge'&&G.state==='ready'){fire();return;}if(!PLAY&&TAU>=TMAX*0.999)TAU=0;PLAY=!PLAY;tread();});
+  $('scrub').addEventListener('input',function(){PLAY=false;if(MODE==='field'){TAU=Math.floor(TAU)+this.value/1000;tread();drawPaths();status();DIRTY=true;return;}if(MODE==='scan'||MODE==='tq'){TAU=this.value/1000;update(false);return;}TAU=this.value/1000*TMAX;DIRTY=true;tread();drawPaths();});}
 /* ---------- update, loop, modes ---------- */
-function update(restart){compute();TMAX=tmax();
+function update0(restart){compute();TMAX=tmax();
   if(MODE==='challenge'&&G.state==='ready'){TAU=0;PLAY=false;}else if(restart){TAU=0;PLAY=true;}else{TAU=Math.min(TAU,TMAX);if(!PLAY)TAU=TMAX;}
   status();if(MODE==='journey')syncCtl();eqs();drawDiag();buildPaths();drawPaths();tread();DIRTY=true;}
-var SPD=1,lastT=0;function loop(t){var dt=Math.min(0.25,(t-lastT)/1000);lastT=t;
-  if(PLAY){TAU+=dt*SPD*TMAX/(MODE==='challenge'?6:10);if(TAU>=TMAX){TAU=TMAX;PLAY=false;if(MODE==='challenge'&&G.state==='flying')finishFlight();}tread();drawPaths();DIRTY=true;}
+var SPD=1,FRQ=0,lastT=0;function loop(t){var dt=Math.min(0.25,(t-lastT)/1000);lastT=t;
+  FRQ++;if(MODE==='tq'){TQP+=dt*SPD/3.2;if(TQP>=1.15){TQP=0;tqPacket();}DIRTY=true;}
+  if(PLAY){if(MODE==='field'){TAU+=dt*0.2*SPD;}else if(MODE==='scan'||MODE==='tq'){TAU+=dt*SPD/(MODE==='scan'?SCN.secs:18);if(TAU>=1){TAU=1;PLAY=false;}if(MODE==='scan')scanSetUV();else tqSetUV();if(FRQ%6===0||!PLAY){compute();if(MODE==='scan')buildPaths();drawDiag();status();eqs();}}
+    else{TAU+=dt*SPD*TMAX/(MODE==='challenge'?6:10);if(TAU>=TMAX){TAU=TMAX;PLAY=false;if(MODE==='challenge'&&G.state==='flying')finishFlight();}}tread();drawPaths();if(MODE==='field')status();DIRTY=true;}
   if(DIRTY&&renderer){updateScene();placeCam();renderer.render(scene,camera);tags();drawEnd();DIRTY=false;}requestAnimationFrame(loop);}
 function setLook(l){document.documentElement.setAttribute('data-look',l);$('lookA').setAttribute('aria-pressed',String(l==='figure'));$('lookB').setAttribute('aria-pressed',String(l==='vacuum'));restyle();drawDiag();drawPaths();status();if(MODE==='challenge')renderGame();}
-function setMode(m){if(m===MODE)return;if(m==='challenge'){SJ={U:S.U,V:S.V};MODE='challenge';document.documentElement.setAttribute('data-mode','challenge');if(!G.started){newGame();}else{S.U=SG.U;S.V=SG.V;S.diag=G.type==='guess'?'aq':'uv';update(false);renderGame();}}
+function setMode0(m){if(m===MODE)return;if(m==='challenge'){SJ={U:S.U,V:S.V};MODE='challenge';document.documentElement.setAttribute('data-mode','challenge');if(!G.started){newGame();}else{S.U=SG.U;S.V=SG.V;S.diag=G.type==='guess'?'aq':'uv';update(false);renderGame();}}
   else{SG={U:S.U,V:S.V};MODE='journey';document.documentElement.setAttribute('data-mode','journey');S.U=SJ.U;S.V=SJ.V;S.diag='aq';$('tabCtl').textContent='Settings';update(false);}
   document.querySelectorAll('.parts button[data-mode]').forEach(function(b){if(b.dataset.mode===m)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   history.replaceState(null,'',m==='challenge'?'#challenge':'#');}
@@ -573,10 +585,237 @@ function boot(){initThree();bindDiag();bindCtl();bindTime();
   document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){S.pane=b.dataset.t;panes();if(S.pane==='paths')drawPaths();});});
   var ro=new ResizeObserver(function(){resize();drawPaths();DIRTY=true;});ro.observe($('stage'));ro.observe($('pathc'));
   window.addEventListener('resize',function(){panes();});panes();
-  update(true);resize();if(location.hash.indexOf('vacuum')>=0)setLook('vacuum');requestAnimationFrame(loop);if(location.hash.indexOf('challenge')>=0)setMode('challenge');
-  window.addEventListener('hashchange',function(){setMode(location.hash.indexOf('challenge')>=0?'challenge':'journey');});}
+  update(true);resize();if(location.hash.indexOf('vacuum')>=0)setLook('vacuum');requestAnimationFrame(loop);setMode(hashMode());
+  window.addEventListener('hashchange',function(){setMode(hashMode());});}
+function hashMode(){var h=location.hash;return h.indexOf('challenge')>=0?'challenge':h.indexOf('field')>=0?'field':h.indexOf('mixture')>=0?'mix':h.indexOf('scanning')>=0?'scan':h.indexOf('triple')>=0?'tq':'journey';}
+/* ===================== new parts: dispatch ===================== */
+var OWNV={mix:null,scan:null,tq:null};
+function multiMode(){return MODE==='mix'||MODE==='scan'||MODE==='tq';}
+function compute(){if(MODE==='field'){ION=FD.ion==='none'?[]:[fly(S.m,FD.ion==='rf'?0:S.U,FD.ion==='dc'?0:S.V)];R=ION[0]||fly(S.m,S.U,S.V);return;}
+  if(MODE==='mix'){ION=MX.ions.map(function(io,i){var o=fly(io.m,S.U,S.V);o.i=i;o.f=io.f;return o;});R=ION[0];return;}
+  if(MODE==='scan'){ION=SCN.ions.map(function(io,i){var o=fly(io.m,S.U,S.V);o.i=i;o.f=io.f;return o;});R=ION[0];return;}
+  if(MODE==='tq'){ION=tqSpecies().map(function(io,i){var o=fly(io.m,S.U,S.V);o.i=i;o.f=io.f;return o;});R=ION[0];return;}
+  compute0();}
+function ionColor(o){if(multiMode())return GPAL[vac()?'vacuum':'figure'][o.i%6];if(MODE==='field')return o.fate==='pass'?css('--ion'):css('--lost');return ionColor0(o);}
+function status(){if(MODE==='field')return statusF();if(MODE==='mix')return statusMX();if(MODE==='scan')return statusSC();if(MODE==='tq')return statusTQ();status0();}
+function phiNow(){if(MODE==='field')return S.U+S.V*Math.cos(2*Math.PI*TAU);return phiNow0();}
+function updateScene(){var tq=MODE==='tq';rods.concat(plates).forEach(function(m){m.visible=!tq;});outlines.forEach(function(o){o.visible=!tq&&!vac();});axes.forEach(function(x){x.visible=!tq;});if(TQG)TQG.visible=tq;if(PLANE)PLANE.visible=MODE==='field';
+  if(tq){tubes.concat(heads,marks).forEach(function(m){m.visible=false;});updateTQ();return;}updateScene0();if(MODE==='field')fieldScene();}
+function drawEnd(){var box=document.querySelector('.endon');box.style.display=MODE==='tq'?'none':'';if(MODE==='field')return drawEndF();if(MODE==='tq')return;drawEnd0();
+  box.querySelector('span').textContent='Looking down the rods: x rods +(U + V cos ωt), y rods −(U + V cos ωt)';}
+function drawPaths(){if(MODE==='field')return drawParab();if(MODE==='scan')return drawScanSpec();if(MODE==='tq')return drawTQ();drawPaths0();}
+function eqs(){if(MODE==='field')return eqsF();if(MODE==='mix')return eqsMX();if(MODE==='scan')return eqsSC();if(MODE==='tq')return eqsTQ();eqs0();}
+function tread(){if(MODE==='field'){var deg=Math.round(((TAU%1)+1)%1*360);$('tread').textContent='RF phase '+deg+'°, cycle '+(Math.floor(TAU)+1);$('scrub').disabled=false;$('scrub').value=Math.round(((TAU%1)+1)%1*1000);$('scrub').style.setProperty('--p',(((TAU%1)+1)%1*100)+'%');$('playIcon').setAttribute('d',PLAY?'M3 2h3.5v12H3zM9.5 2H13v12H9.5z':'M3 1.5v13l11-6.5z');return;}
+  if(MODE==='scan'||MODE==='tq'){var lab=MODE==='scan'?scanLabel():tqLabel();$('tread').textContent=lab;$('scrub').disabled=false;$('scrub').value=Math.round(TAU*1000);$('scrub').style.setProperty('--p',(TAU*100)+'%');$('playIcon').setAttribute('d',PLAY?'M3 2h3.5v12H3zM9.5 2H13v12H9.5z':'M3 1.5v13l11-6.5z');return;}
+  tread0();}
+function update(restart){if(MODE==='field'){compute();status();eqs();drawDiag();buildPaths();drawPaths();tread();renderX(true);DIRTY=true;return;}
+  if(MODE==='scan'||MODE==='tq'){if(MODE==='scan')scanSetUV();else tqSetUV();compute();status();eqs();drawDiag();buildPaths();drawPaths();tread();renderX(true);DIRTY=true;return;}
+  update0(restart);if(MODE==='mix')renderX(true);}
+function setMode(m){if(m===MODE)return;var old=MODE;
+  if(old in OWNV)OWNV[old]={U:S.U,V:S.V};if(old==='challenge')SG={U:S.U,V:S.V};if(old==='journey'||old==='field')SJ={U:S.U,V:S.V};
+  MODE=m;document.documentElement.setAttribute('data-mode',m);PLAY=false;
+  if(m==='journey'||m==='field'){S.U=SJ.U;S.V=SJ.V;}if(m in OWNV){if(OWNV[m]){S.U=OWNV[m].U;S.V=OWNV[m].V;}else initOwn(m);}
+  if(m==='challenge'){if(!G.started)newGame();else{S.U=SG.U;S.V=SG.V;S.diag=G.type==='guess'?'aq':'uv';update(false);renderGame();}afterMode(m);return;}
+  S.diag=m==='scan'?'uv':'aq';
+  if(m==='field'){TAU=0;PLAY=true;update(false);}else if(m==='mix'){update(true);}else if(m==='scan'){TAU=0;scanPrep();PLAY=true;update(false);}else if(m==='tq'){TAU=0;tqPrep();PLAY=true;update(false);}else update(false);
+  afterMode(m);}
+function afterMode(m){renderX();document.querySelectorAll('.parts button[data-mode]').forEach(function(b){if(b.dataset.mode===m)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  $('tabCtl').textContent=m==='challenge'?'Game':'Settings';history.replaceState(null,'',{challenge:'#challenge',field:'#field',mix:'#mixture',scan:'#scanning',tq:'#triple-quad'}[m]||'#');
+  document.title='Quadrupole mass filter: '+({field:'the rods and the field',journey:'one ion’s journey',mix:'filtering a mixture',scan:'scanning',tq:'triple quad',challenge:'mass filter challenge'}[m]);}
+function initOwn(m){if(m==='mix'){var mn=Math.min.apply(null,MX.ions.map(function(o){return o.m;}));S.U=0;S.V=Math.round(0.45*Kf(mn)/2*10)/10;}if(m==='scan'){S.U=0;S.V=0;}if(m==='tq'){S.U=0;S.V=0;}}
+function renderX(soft){if(MODE==='field')return renderF(soft);if(MODE==='mix')return renderMX(soft);if(MODE==='scan')return renderSC(soft);if(MODE==='tq')return renderTQ(soft);}
+function sl(id,label,val,pos){return '<div class="ctl"><div class="lab"><span>'+label+'</span><span class="val">'+val+'</span></div><input type="range" id="'+id+'" min="0" max="1000" value="'+Math.round(Math.max(0,Math.min(1,pos))*1000)+'" style="--p:'+(Math.max(0,Math.min(1,pos))*100)+'%"></div>';}
+function bindSl(id,lo,hi,setter){var r=$(id);if(!r)return;r.addEventListener('input',function(){var v=lo+(hi-lo)*this.value/1000;this.style.setProperty('--p',(this.value/10)+'%');setter(v);this.closest('.ctl').querySelector('.val').textContent=fV(arguments.length?v:v);});}
+/* ===================== part: the rods and the field (slides 3–10) ===================== */
+var FD={ion:'none',rod:'round'},PLANE=null,PCV=null,PTEX=null;
+function fieldInit3D(){if(PLANE)return;PCV=document.createElement('canvas');PCV.width=200;PCV.height=200;PTEX=new T3.CanvasTexture(PCV);var E=1+2*RR+0.15;
+  PLANE=new T3.Mesh(new T3.PlaneGeometry(2*E,2*E),new T3.MeshBasicMaterial({map:PTEX,transparent:true,side:T3.DoubleSide,depthWrite:false}));PLANE.position.set(0,0,LD*0.5);scene.add(PLANE);}
+function inRod(x,y){var c=1+RR;return Math.hypot(x-c,y)<RR||Math.hypot(x+c,y)<RR||Math.hypot(x,y-c)<RR||Math.hypot(x,y+c)<RR;}
+function inHyp(x,y){return Math.abs(x*x-y*y)>1;}
+function drawPot(){var W=PCV.width,H=PCV.height,ctx=PCV.getContext('2d'),img=ctx.createImageData(W,H),E=1+2*RR+0.15,ph=phiNow(),n=Math.max(1e-9,Math.abs(S.U)+S.V),s=ph/n;
+  function hx(h){var c=new T3.Color(h);return [c.r*255,c.g*255,c.b*255];}var cp=hx(css('--plus')),cm=hx(css('--minus')),bg=hx(vac()?'#16212c':'#ffffff'),hyp=FD.rod==='hyper';
+  for(var j=0;j<H;j++)for(var i=0;i<W;i++){var x=-E+2*E*i/(W-1),y=E-2*E*j/(H-1),o=(j*W+i)*4;if(hyp?inHyp(x,y):inRod(x,y)){img.data[o+3]=0;continue;}if(Math.hypot(x,y)>E){img.data[o+3]=0;continue;}
+    var v=Math.max(-1,Math.min(1,s*(x*x-y*y)/1.0)),col=v>0?cp:cm,k=Math.abs(v)*0.85;img.data[o]=bg[0]+(col[0]-bg[0])*k;img.data[o+1]=bg[1]+(col[1]-bg[1])*k;img.data[o+2]=bg[2]+(col[2]-bg[2])*k;img.data[o+3]=vac()?205:225;}
+  ctx.putImageData(img,0,0);ctx.strokeStyle=vac()?'rgba(230,236,241,.5)':'rgba(20,32,41,.45)';ctx.lineWidth=1;
+  function X(x){return (x+E)/(2*E)*(W-1);}function Y(y){return (E-y)/(2*E)*(H-1);}
+  [-1.5,-1,-0.6,-0.3,0.3,0.6,1,1.5].forEach(function(k){for(var sg=-1;sg<=1;sg+=2){ctx.beginPath();var first=true;for(var t=0;t<=80;t++){var u=-E+2*E*t/80,x,y;if(k>0){y=u;x=sg*Math.sqrt(k+y*y);}else{x=u;y=sg*Math.sqrt(x*x-k);}if(Math.hypot(x,y)>E||(hyp?inHyp(x,y):inRod(x,y))){first=true;continue;}if(first){ctx.moveTo(X(x),Y(y));first=false;}else ctx.lineTo(X(x),Y(y));}ctx.stroke();}});}
+function fieldScene(){fieldInit3D();PLANE.visible=true;drawPot();PTEX.needsUpdate=true;
+  var v=vac(),ph=phiNow(),n=Math.max(1e-9,Math.abs(S.U)+S.V),s=Math.max(-1,Math.min(1,ph/n)),cp=new T3.Color(css('--plus')),cm=new T3.Color(css('--minus')),base=new T3.Color(v?0xaab6c1:0xc3ccd5);
+  rods.forEach(function(m){var sign=m.userData.pair==='x'?s:-s;m.material.color=base.clone().lerp(sign>0?cp:cm,Math.abs(sign)*(v?0.35:0.6));if(v)m.material.emissive=(sign>0?cp:cm).clone().multiplyScalar(Math.abs(sign)*0.25);});}
+function drawEndF(){var cv=$('endc'),r=cv.getBoundingClientRect();if(!r.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);if(cv.width!==Math.round(r.width*dpr)){cv.width=r.width*dpr;cv.height=r.height*dpr;}
+  fieldInit3D();drawPot();var c=cv.getContext('2d'),W=r.width,E=1+2*RR+0.15,sc=W/(2*E),cx=W/2,cy=W/2,ph=phiNow(),pl=css('--plus'),mi=css('--minus'),ink=css('--ink');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,cv.width,cv.height);c.drawImage(PCV,0,0,cv.width,cv.height);c.setTransform(dpr,0,0,dpr,0,0);
+  [['x',1],['x',-1],['y',1],['y',-1]].forEach(function(p){var pos=(p[0]==='x')===(ph>=0),col=pos?pl:mi;c.fillStyle=col;c.globalAlpha=0.35;c.strokeStyle=col;c.lineWidth=1.6;c.beginPath();
+    if(FD.rod==='round'){var X=p[0]==='x'?p[1]*(1+RR):0,Y=p[0]==='y'?p[1]*(1+RR):0;c.arc(cx+X*sc,cy-Y*sc,RR*sc,0,7);}
+    else{for(var t=-1.6;t<=1.6;t+=0.05){var u=t,a2=Math.sqrt(1+u*u),X2=p[0]==='x'?p[1]*a2:u,Y2=p[0]==='y'?p[1]*a2:u;if(t<=-1.6+1e-9)c.moveTo(cx+X2*sc,cy-Y2*sc);else c.lineTo(cx+X2*sc,cy-Y2*sc);}var far=E*1.4;if(p[0]==='x'){c.lineTo(cx+p[1]*far*sc,cy-1.6*sc);c.lineTo(cx+p[1]*far*sc,cy+1.6*sc);}else{c.lineTo(cx+1.6*sc,cy-p[1]*far*sc);c.lineTo(cx-1.6*sc,cy-p[1]*far*sc);}c.closePath();}
+    c.fill();c.globalAlpha=1;c.stroke();c.fillStyle=col;c.font='600 14px '+css('--ui');c.textAlign='center';var lx=p[0]==='x'?p[1]*(1+RR):0,ly=p[0]==='y'?p[1]*(1+RR):0;c.fillText(pos?'+':'−',cx+lx*sc,cy-ly*sc+5);});
+  c.fillStyle=ink;c.font='italic 600 13px '+css('--math');c.textAlign='left';c.fillText('x',W-12,cy-5);c.fillText('y',cx+5,13);
+  ION.forEach(function(o){var col=ionColor(o);c.strokeStyle=col;c.lineWidth=1.3;c.beginPath();o.pts.forEach(function(p,i){var X=cx+p[0]*sc,Y=cy-p[1]*sc;if(i)c.lineTo(X,Y);else c.moveTo(X,Y);});c.stroke();var e=o.pts[o.pts.length-1];c.beginPath();c.arc(cx+e[0]*sc,cy-e[1]*sc,3.4,0,7);c.fillStyle=col;c.fill();});
+  document.querySelector('.endon span').textContent=FD.rod==='round'?'Round rods (real): the field near the axis is close to ideal':'Hyperbolic rods (ideal): equipotentials x² − y² = constant';}
+function drawParab(){var cv=$('pathc'),rr=cv.getBoundingClientRect();if(!rr.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);cv.width=rr.width*dpr;cv.height=rr.height*dpr;var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  var W=rr.width,H=rr.height,ph=phiNow(),ph2=S.U-S.V*Math.cos(2*Math.PI*TAU),mut=css('--muted'),ink=css('--ink'),rule=css('--rule'),pl=css('--plus'),gap=24,pw=(W-gap)/2,top=18,bot=H-34,mid=(top+bot)/2,amp=(bot-top)/2-4,vmax=Math.max(1e-6,Math.abs(S.U)+S.V)*1.1;c.clearRect(0,0,W,H);
+  [['x','along x (y = 0)','x rod',1],['y','along y (x = 0)','y rod',-1]].forEach(function(P2,k){var x0=k*(pw+gap),X=function(u){return x0+12+(u+1)/2*(pw-24);},Y=function(v){return mid-v/vmax*amp;};
+    c.strokeStyle=rule;c.lineWidth=1;c.beginPath();c.moveTo(X(-1),mid);c.lineTo(X(1),mid);c.stroke();c.setLineDash([3,3]);c.beginPath();c.moveTo(X(-1),top);c.lineTo(X(-1),bot);c.moveTo(X(1),top);c.lineTo(X(1),bot);c.stroke();c.setLineDash([]);
+    function curve(f0,col,w,dash,al){c.strokeStyle=col;c.lineWidth=w;c.globalAlpha=al;c.setLineDash(dash);c.beginPath();for(var t=0;t<=80;t++){var u=-1+2*t/80,v=P2[3]*f0*u*u;if(t)c.lineTo(X(u),Y(v));else c.moveTo(X(u),Y(v));}c.stroke();c.setLineDash([]);c.globalAlpha=1;}
+    curve(ph2,mut,1.2,[],0.35);curve(S.U,pl,1.5,[5,4],1);curve(ph,ink,2.2,[],1);
+    c.fillStyle=ink;c.font='600 12px '+css('--ui');c.textAlign='left';c.fillText(W<600?'Along '+P2[0]:'Potential '+P2[1],x0+12,13);c.fillStyle=mut;c.font='10.5px '+css('--ui');c.textAlign='center';c.fillText(P2[2],X(-1),bot+12);c.fillText(P2[2],X(1),bot+12);c.fillText('axis',X(0),bot+12);});
+  c.textAlign='left';c.font='10.5px '+css('--ui');c.fillStyle=mut;c.fillText('Solid: now. Faint: half an RF cycle later. Dashed: the DC part alone (U).',8,H-4);}
+function statusF(){var ph=phiNow(),rv=Math.round(ph),s1=$('s1'),s2=$('s2');s1.innerHTML='x rods at '+(rv===0?'0':(rv>0?'+':'−')+Math.abs(rv))+' V, y rods at '+(rv===0?'0':(rv>0?'−':'+')+Math.abs(rv))+' V';
+  var t=Math.abs(ph)<0.15*(Math.abs(S.U)+S.V)?'The potential on the rods is passing through zero: almost no field right now.':(ph>0?'x rods positive: along x the potential rises toward the rods and pushes a positive ion back to the axis; along y it falls toward the negative rods and pulls the ion outward. Half a cycle later the roles swap.':'x rods negative: now the push toward the axis is along y and the pull outward is along x.');
+  if(FD.ion==='dc')t='DC only (U = '+fV(S.U)+', V = 0): the steady field pushes a positive ion toward the negative y rods. It never comes back, so DC alone cannot transmit ions.';
+  if(FD.ion==='rf')t='RF only (U = 0): the force flips direction every half cycle and the ion oscillates around the axis. With q below 0.908 it stays stable and passes, whatever its exact mass.';
+  if(FD.ion==='both')t='DC + RF: the ion oscillates in x and y at once. Whether it passes depends on the balance between the two, which is set by its m/z (One ion’s journey).';s2.textContent=t;}
+function eqsF(){var L=S.last;$('eqbox').innerHTML='<div class="eq">φ<sub>0</sub> = '+rd(L==='U','<i>U</i>')+' + '+rd(L==='V','<i>V</i>')+' cos ω<i>t</i><span class="n">applied to the x rods; the y rods get −φ<sub>0</sub>. Opposite rods are connected (slide 9). Now: U = '+fV(S.U)+', V = '+fV(S.V)+'.</span></div>'
+  +'<div class="eq">φ(<i>x</i>, <i>y</i>) = φ<sub>0</sub> '+frac('<i>x</i>² − <i>y</i>²','<i>r</i><sub>0</sub>²')+'<span class="n">quadratic in x and y. Laplace’s equation (∇²φ = 0) forces the two coefficients to be equal and opposite, so the equipotentials are saddles (slide 7).</span></div>'
+  +'<div class="eq"><i>E<sub>x</sub></i> = −'+frac('∂φ','∂<i>x</i>')+' = −'+frac('2φ<sub>0</sub><i>x</i>','<i>r</i><sub>0</sub>²')+', &nbsp; <i>E<sub>y</sub></i> = +'+frac('2φ<sub>0</sub><i>y</i>','<i>r</i><sub>0</sub>²')+'<span class="n">the field grows linearly with distance from the axis, E = E<sub>0</sub>x (slide 6)</span></div>'
+  +'<div class="eq">ideal rods: <i>x</i>² − <i>y</i>² = ±<i>r</i><sub>0</sub>²<span class="n">hyperbolic surfaces. Real rods are round, with radius about 1.15 r<sub>0</sub>, which gives a nearly ideal field near the axis (slide 8).</span></div>';}
+function renderF(soft){var b=$('ctlX'),K=Kf(S.m);if(soft&&b.querySelector('#fU')){return;}
+  b.innerHTML='<h2>Settings</h2>'+sl('fU','DC voltage, <i style="font-family:var(--math)">U</i>',fV(S.U),S.U/(0.3*K/4))+sl('fV','RF amplitude, <i style="font-family:var(--math)">V</i>',fV(S.V),S.V/(K/2))
+   +'<div class="lab" style="margin-top:6px;font-size:14px">Rod shape in the end view</div><div class="chips">'+[['round','Round (real)'],['hyper','Hyperbolic (ideal)']].map(function(x){return '<button data-rod="'+x[0]+'" aria-pressed="'+(FD.rod===x[0])+'">'+x[1]+'</button>';}).join('')+'</div>'
+   +'<div class="lab" style="margin-top:10px;font-size:14px">Send an ion (m/z '+S.m+') through</div><div class="chips">'+[['none','No ion'],['dc','DC only'],['rf','RF only'],['both','DC + RF']].map(function(x){return '<button data-fion="'+x[0]+'" aria-pressed="'+(FD.ion===x[0])+'">'+x[1]+'</button>';}).join('')+'</div>'
+   +'<p class="note" style="margin-top:10px">The RF runs slowly here, about 5 seconds per cycle, so you can follow the polarity. Drag the timeline to step through one cycle.</p>';
+  bindSl('fU',0,0.3*K/4,function(v){S.U=Math.round(v*100)/100;S.last='U';update(false);});bindSl('fV',0,K/2,function(v){S.V=Math.round(v*100)/100;S.last='V';update(false);});
+  b.querySelectorAll('[data-rod]').forEach(function(x){x.addEventListener('click',function(){FD.rod=x.dataset.rod;renderF();DIRTY=true;});});
+  b.querySelectorAll('[data-fion]').forEach(function(x){x.addEventListener('click',function(){FD.ion=x.dataset.fion;renderF();update(false);});});}
+/* ===================== part: filtering a mixture (slides 20, 23–24) ===================== */
+var MXSETS={air:{n:'Ionized air',ions:[['N₂⁺•',28],['O₂⁺•',32],['Ar⁺',40],['CO₂⁺•',44]]},near:{n:'Too light, just right, too heavy',ions:[['C₂H₃⁺',27],['N₂⁺•',28],['C₂H₅⁺',29]]},frag:{n:'Hydrocarbon fragments',ions:[['CH₃⁺',15],['C₂H₅⁺',29],['C₃H₇⁺',43],['C₄H₉⁺',57],['C₆H₅⁺',77]]}};
+var MX={set:'air',ions:MXSETS.air.ions.map(function(x){return {f:x[0],m:x[1]};})};
+function mxHi(k){var mx=Math.max.apply(null,MX.ions.map(function(o){return o.m;})),K=Kf(mx);return k==='V'?K/2*1.05:0.3*K/4;}
+function keepOnly(i){var K=Kf(MX.ions[i].m);S.V=Math.round(0.700*K/2*100)/100;S.U=Math.round(0.231*K/4*100)/100;S.last='aq';renderMX();update(true);}
+function statusMX(){var s1=$('s1'),s2=$('s2'),done=TAU>=TMAX-1e-12,pass=ION.filter(function(o){return o.fate==='pass';});
+  s1.innerHTML=ION.map(function(o){var f=o.fate==='pass'?'passes':(o.fate==='x'?'hits an x rod':'hits a y rod');return '<span style="color:'+ionColor(o)+'">'+o.f+'</span> '+(done||o.fate==='pass'||TAU>=o.T*(o.cycles/o.total)?f:'…');}).join(', &nbsp;');
+  s2.textContent=pass.length===ION.length?(S.U===0?'RF only (U = 0): every ion with q below 0.908 passes, so the quadrupole is just an ion guide. Raise U, or tap “Keep only” for one ion.':'Every ion in the mixture is inside the stable region at these settings, so all of them pass.'):(pass.length===0?'No ion is inside the stable region at these settings, so nothing reaches the detector.':(pass.length===1?'Only '+pass[0].f+' sits inside the stable region. Lighter ions are thrown out by the AC field and hit x rods; heavier ones are dragged off by the DC field and hit y rods.':pass.map(function(o){return o.f;}).join(' and ')+' are inside the stable region; the rest hit the rods.'));}
+function eqsMX(){var L=S.last;$('eqbox').innerHTML='<div class="eq"><i>a</i> = '+frac('4<i>e</i>'+rd(L==='U'||L==='aq','<i>U</i>'),'<i>m r</i><sub>0</sub>²ω²')+' &nbsp; <i>q</i> = '+frac('2<i>e</i>'+rd(L==='V'||L==='aq','<i>V</i>'),'<i>m r</i><sub>0</sub>²ω²')+'<span class="n">the same U and V for every ion; m sets where each one lands on the diagram</span></div>'
+  +'<div class="eq">'+frac('<i>a</i>','<i>q</i>')+' = '+frac('2<i>U</i>','<i>V</i>')+(S.V>0?' = '+f3(2*S.U/S.V):'')+'<span class="n">the slope of the dashed line through the origin; every ion’s point sits on it, lighter ions further out (slide 23)</span></div>'
+  +'<div class="eq" style="font-size:13px">'+ION.map(function(o){return '<span style="color:'+ionColor(o)+'"><b>'+o.f+'</b>: q = '+o.q.toFixed(3)+', a = '+o.a.toFixed(3)+'</span>';}).join('<br>')+'</div>';}
+function renderMX(soft){var b=$('ctlX');if(soft&&b.querySelector('#mU')){var vv=b.querySelectorAll('.ctl .val');vv[0].textContent=fV(S.V);vv[1].textContent=fV(S.U);[['mV','V'],['mU','U']].forEach(function(k){var r=$(k[0]),h=mxHi(k[1]),p=Math.max(0,Math.min(1,S[k[1]]/h));r.value=Math.round(p*1000);r.style.setProperty('--p',(p*100)+'%');});return;}
+  var h='<h2>Settings</h2><div class="chips" role="group" aria-label="Mixture">'+Object.keys(MXSETS).map(function(k){return '<button data-mset="'+k+'" aria-pressed="'+(MX.set===k)+'">'+MXSETS[k].n+'</button>';}).join('')+'<button data-mset="own" aria-pressed="'+(MX.set==='own')+'">Your own</button></div>';
+  if(MX.set==='own')h+='<div class="ctl" style="margin-top:10px"><div class="lab"><span>m/z values, separated by commas (up to 6)</span></div><input id="mown" type="text" inputmode="decimal" value="'+MX.ions.map(function(o){return o.m;}).join(', ')+'" style="width:100%;border:1px solid var(--rule);border-radius:8px;padding:7px 10px;font-size:16px;background:var(--soft)"></div>';
+  h+=sl('mV','RF amplitude, <i style="font-family:var(--math)">V</i>',fV(S.V),S.V/mxHi('V'))+sl('mU','DC voltage, <i style="font-family:var(--math)">U</i>',fV(S.U),S.U/mxHi('U'))
+   +'<div class="lab" style="margin-top:6px;font-size:14px">Keep only one ion (puts its working point just under the tip)</div><div class="ions" style="margin-top:6px">'+MX.ions.map(function(o,i){return '<button data-keep="'+i+'"><b><span class="dot" style="background:'+GPAL[vac()?'vacuum':'figure'][i%6]+'"></span>'+o.f+'</b><small>m/z '+o.m+'</small></button>';}).join('')+'</div>'
+   +'<div class="btnrow"><button class="btn" id="mAgain">Fly again</button><button class="btn" id="mAll">Pass everything (RF only)</button></div>';
+  b.innerHTML=h;
+  b.querySelectorAll('[data-mset]').forEach(function(x){x.addEventListener('click',function(){MX.set=x.dataset.mset;if(MX.set!=='own')MX.ions=MXSETS[MX.set].ions.map(function(y){return {f:y[0],m:y[1]};});initOwn('mix');renderMX();update(true);});});
+  if($('mown'))$('mown').addEventListener('change',function(){var v=this.value.split(/[,\s]+/).map(parseFloat).filter(function(x){return isFinite(x)&&x>0;}).slice(0,6);if(!v.length)return;MX.ions=v.map(function(m){return {f:'m/z '+(Math.round(m*10)/10),m:m};});initOwn('mix');renderMX();update(true);});
+  bindSl('mV',0,mxHi('V'),function(v){S.V=Math.round(v*100)/100;S.last='V';update(true);});bindSl('mU',0,mxHi('U'),function(v){S.U=Math.round(v*100)/100;S.last='U';update(true);});
+  b.querySelectorAll('[data-keep]').forEach(function(x){x.addEventListener('click',function(){keepOnly(+x.dataset.keep);});});
+  $('mAgain').addEventListener('click',function(){update(true);});$('mAll').addEventListener('click',function(){initOwn('mix');S.last='aq';renderMX();update(true);});}
+/* ===================== part: scanning (slides 18–22, 25–27) ===================== */
+var SCN={set:'air',ions:MXSETS.air.ions.map(function(x){return {f:x[0],m:x[1]};}),lam:0.15,mode:'ratio',T:[],Va:0,Vb:1,qc:0.7,secs:16};
+/* unit resolution: U/V rises slightly with V so the stable window is about 1 m/z wide at every mass */
+var WTAB=null;function wtab(){if(WTAB)return WTAB;WTAB=[];for(var l=0.140;l<=0.1679;l+=0.0004){var w=lineWindow(l);if(w)WTAB.push([l,(w[1]-w[0])/((w[0]+w[1])/2),(w[0]+w[1])/2]);}return WTAB;}
+function lamForM(m){var f=1/m,T=wtab(),best=T[T.length-1];for(var i=0;i<T.length;i++){if(T[i][1]<=f){best=T[i];break;}}return best;}
+function lamAt(V){if(SCN.mode!=='unit')return SCN.lam;return lamForM(2*V/(0.706*Kf(1)))[0];}
+/* stable q range along the scan line a = 2λq (stable in x and y) */
+var LWC={};
+function lineWindow(lam){var key=lam.toFixed(5);if(key in LWC)return LWC[key];function ok(q){var r=region(2*lam*q,q);return r.x&&r.y;}var hit=null,q;
+  for(q=0.002;q<0.95;q+=(q>0.55&&q<0.8)?0.0008:0.004){if(ok(q)){hit=q;break;}}if(hit===null)return (LWC[key]=null);
+  var lo=hit-0.004,hi=hit;while(lo>0&&ok(lo))lo-=0.004;var a1=Math.max(0,lo),b1x=hit;for(var it=0;it<26;it++){var m=(a1+b1x)/2;if(ok(m))b1x=m;else a1=m;}var L0=b1x;
+  var h2=hit;while(h2<0.95&&ok(h2+0.004))h2+=0.004;var a2=h2,b2=Math.min(0.95,h2+0.004);for(it=0;it<26;it++){var m2=(a2+b2)/2;if(ok(m2))a2=m2;else b2=m2;}return (LWC[key]=[L0,a2]);}
+/* transmission of one ion along the scan line: a batch of starting positions and RF phases, flown with the full equations */
+function transCurve(m,lam,Vs){var K=Kf(m),w0=lineWindow(lam),ICS=[[0.1,0.1,0],[0.25,-0.15,1.0],[-0.2,0.25,2.1],[0.3,0.3,0.5],[-0.3,-0.1,1.6],[0.05,-0.3,2.6],[0.18,0.05,0.8],[-0.1,-0.25,2.9]],sx=P.x0,sy=P.y0,sp=P.ph,out=[],WC={};
+  for(var k=0;k<Vs.length;k++){var V=Vs[k],q=2*V/K,lk=SCN.mode==='unit'?lamAt(V):lam,U=lk*V,w=SCN.mode==='unit'?(WC[lk]||(WC[lk]=lineWindow(lk))):w0;if(!w||q<w[0]-0.03||q>w[1]+0.03){out.push(w&&q>w[0]&&q<w[1]?1:0);continue;}var n=0;for(var j=0;j<ICS.length;j++){P.x0=ICS[j][0];P.y0=ICS[j][1];P.ph=ICS[j][2];if(fly(m,U,V).fate==='pass')n++;}out.push(n/ICS.length);}
+  P.x0=sx;P.y0=sy;P.ph=sp;return out;}
+function scanPrep(){var ms=SCN.ions.map(function(o){return o.m;}),mn=Math.min.apply(null,ms),mx=Math.max.apply(null,ms),w=lineWindow(SCN.lam);SCN.qc=SCN.mode==='unit'?0.706:(SCN.lam>0.001&&w?(w[0]+w[1])/2:0.908);
+  SCN.Va=0.55*SCN.qc*Kf(mn)/2;SCN.Vb=1.12*SCN.qc*Kf(mx)/2;var N=360;SCN.Vs=[];for(var i=0;i<N;i++)SCN.Vs.push(SCN.Va+(SCN.Vb-SCN.Va)*i/(N-1));
+  if(SCN.mode!=='unit'&&SCN.lam<0.001){SCN.T=SCN.ions.map(function(o){var K=Kf(o.m);return SCN.Vs.map(function(V){return 2*V/K<0.908?1:0;});});}
+  else SCN.T=SCN.ions.map(function(o){return transCurve(o.m,SCN.lam,SCN.Vs);});
+  SCN.T=SCN.T.map(function(t){return t.map(function(v,k){return (t[Math.max(0,k-1)]+2*v+t[Math.min(t.length-1,k+1)])/4;});});
+  SCN.sig=SCN.Vs.map(function(V,k){var s=0;SCN.T.forEach(function(t){s+=t[k];});return s;});SCN.peaks=SCN.ions.map(function(o,i){var t=SCN.T[i],mx2=Math.max.apply(null,t),idx=[];t.forEach(function(v,k){if(v>=mx2/2&&mx2>0)idx.push(k);});
+    if(!idx.length)return null;var mz=function(k){return mzOfV(SCN.Vs[k]);},lo=mz(idx[0]),hi=mz(idx[idx.length-1]);return {m:o.m,top:mx2,fw:hi-lo,c:(lo+hi)/2};});}
+function mzOfV(V){return 2*V/(SCN.qc*Kf(1));}
+function scanSetUV(){var V=SCN.Va+(SCN.Vb-SCN.Va)*Math.min(1,TAU);S.V=V;S.U=lamAt(V)*V;}
+function scanLabel(){return TAU<1?'Scanning: m/z ≈ '+mzOfV(S.V).toFixed(1):'Scan complete';}
+function statusSC(){var s1=$('s1'),s2=$('s2'),pass=ION.filter(function(o){return o.fate==='pass';});
+  s1.innerHTML=TAU>=1?'Scan complete':'Scanning: U and V rise together, U/V = '+SCN.lam.toFixed(3)+(pass.length?', now passing '+pass.map(function(o){return '<span style="color:'+ionColor(o)+'">'+o.f+'</span>';}).join(', '):', no ion passing right now');
+  s2.textContent=SCN.mode==='unit'?'Unit resolution: U/V is raised slightly as V rises, so every peak is about 1 m/z wide. R = m/Δm then grows in proportion to m, as on slide 4.':SCN.lam<0.001?'RF only (U = 0): every ion below q = 0.908 passes, so there are no peaks. As V rises the lightest ions are lost first. The quadrupole is an ion guide, not a mass filter (slide 27).':'The working point moves up the scan line through each ion’s stable region in turn, so each ion passes for a short stretch of the scan and makes one peak (slides 19–21). A steeper line (higher U/V) cuts a thinner slice of each region: narrower peaks, higher resolution, but fewer ions get through.';}
+function eqsSC(){var w=lineWindow(SCN.lam),pk=(SCN.peaks||[]).filter(function(p){return p;});
+  var lamNow=lamAt(S.V);$('eqbox').innerHTML='<div class="eq">'+frac('<i>U</i>','<i>V</i>')+' = '+lamNow.toFixed(4)+(SCN.mode==='unit'?' (now)':'')+', &nbsp; '+frac('<i>a</i>','<i>q</i>')+' = '+frac('2<i>U</i>','<i>V</i>')+' = '+(2*lamNow).toFixed(3)+'<span class="n">the slope of the scan line. At the tip, a/q = 0.336 and U/V = 0.168: only one m/z at a time, the maximum resolution (slide 26).</span></div>'
+  +'<div class="eq">'+frac('<i>m</i>','<i>z</i>')+' = '+frac('2<i>eV</i>','<i>q</i><sub>c</sub> <i>r</i><sub>0</sub>²ω²')+' ∝ <i>V</i><span class="n">'+(SCN.lam>0.001&&w?'q<sub>c</sub> = '+SCN.qc.toFixed(3)+' is the middle of the stable stretch of this line (q from '+w[0].toFixed(3)+' to '+w[1].toFixed(3)+')':'with U = 0 there is no window; the axis shows the m/z at the q = 0.908 cutoff')+'</span></div>'
+  +(pk.length&&SCN.lam>0.001?'<div class="eq" style="font-size:13.5px">'+pk.map(function(p){return 'm/z '+p.m+': peak width '+p.fw.toFixed(2)+', R = m/Δm ≈ '+Math.round(p.m/Math.max(0.01,p.fw));}).join('<br>')+'<span class="n">'+(SCN.mode==='unit'?'every peak is about 1 m/z wide, so R = m/Δm grows in proportion to m (slide 4)':'with a fixed U/V (a straight line through the origin) each peak’s width grows in proportion to m, so R stays about the same at every mass. Choose “Unit resolution” to see how instruments keep Δm ≈ 1 instead (slide 4).')+'</span></div>':'');}
+function drawScanSpec(){var cv=$('pathc'),rr=cv.getBoundingClientRect();if(!rr.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);cv.width=rr.width*dpr;cv.height=rr.height*dpr;var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  var W=rr.width,H=rr.height,L=40,R=12,top=20,bot=H-28,ink=css('--ink'),mut=css('--muted'),ionc=css('--ion');c.clearRect(0,0,W,H);if(!SCN.Vs)return;var m0=mzOfV(SCN.Va),m1=mzOfV(SCN.Vb),mxs=Math.max.apply(null,SCN.sig.concat([1]));function X(m){return L+(m-m0)/(m1-m0)*(W-L-R);}function Y(v){return bot-v/mxs*(bot-top-12);}
+  c.strokeStyle=ink;c.lineWidth=1;c.beginPath();c.moveTo(L,bot);c.lineTo(W-R,bot);c.stroke();c.fillStyle=mut;c.font='10.5px '+css('--ui');c.textAlign='center';var st=(function(span){var r=span/(W<600?4:8),p=Math.pow(10,Math.floor(Math.log10(r))),f=r/p;return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p;})(m1-m0);for(var m=Math.ceil(m0/st)*st;m<=m1;m+=st)c.fillText(String(+m.toPrecision(4)),X(m),bot+13);
+  c.fillText(SCN.lam<0.001?'low-mass cutoff, m/z (from V)':'m/z (from V)',(L+W)/2,H-3);c.textAlign='left';c.fillStyle=ink;c.font='600 12px '+css('--ui');c.fillText('Ion current at the detector',L,13);
+  var kmax=Math.floor(Math.min(1,TAU)*(SCN.Vs.length-1));c.strokeStyle=ionc;c.lineWidth=1.8;c.beginPath();for(var k=0;k<=kmax;k++){var x=X(mzOfV(SCN.Vs[k])),y=Y(SCN.sig[k]);if(k)c.lineTo(x,y);else c.moveTo(x,y);}c.stroke();
+  (SCN.peaks||[]).forEach(function(p,i){if(!p||mzOfV(SCN.Vs[kmax])<p.c)return;c.fillStyle=GPAL[vac()?'vacuum':'figure'][i%6];c.font='600 11px '+css('--ui');c.textAlign='center';c.fillText(SCN.ions[i].f,X(p.c),Y(p.top)-5);});c.textAlign='left';
+  c.strokeStyle=css('--red');c.setLineDash([3,3]);var xc=X(mzOfV(S.V));c.beginPath();c.moveTo(xc,top);c.lineTo(xc,bot);c.stroke();c.setLineDash([]);}
+function renderSC(soft){var b=$('ctlX');if(soft&&b.querySelector('#sAgain'))return;var sets={air:MXSETS.air,near:MXSETS.near,frag:MXSETS.frag};
+  b.innerHTML='<h2>Settings</h2><div class="chips" role="group" aria-label="Ions">'+Object.keys(sets).map(function(k){return '<button data-sset="'+k+'" aria-pressed="'+(SCN.set===k)+'">'+sets[k].n+'</button>';}).join('')+'</div>'
+   +'<div class="lab" style="margin-top:10px;font-size:14px">How U and V rise</div><div class="chips">'+[['ratio','Fixed U/V (slides 18–22)'],['unit','Unit resolution (slide 4)']].map(function(x){return '<button data-smode="'+x[0]+'" aria-pressed="'+(SCN.mode===x[0])+'">'+x[1]+'</button>';}).join('')+'</div>'
+   +(SCN.mode==='unit'?'<p class="note">U/V is set at each moment so the stable window is 1 m/z wide; the scan line bends slightly upward instead of being straight.</p><div class="btnrow"><button class="primary" id="sAgain">Run the scan again</button></div>':'<div class="lab" style="margin-top:10px;font-size:14px">Scan line (slide 22)</div><div class="chips">'+[[0.10,'Low resolution'],[0.150,'Medium'],[0.163,'High'],[0,'RF only (U = 0)']].map(function(x){return '<button data-lam="'+x[0]+'" aria-pressed="'+(Math.abs(SCN.lam-x[0])<1e-6)+'">'+x[1]+'</button>';}).join('')+'</div>'
+   +sl('sLam','U/V ratio','<span id="lamv">'+SCN.lam.toFixed(3)+'</span>',SCN.lam/0.168)
+   +'<p class="note">U and V rise together at this ratio (each ion present in equal amounts). The peak shapes come from flying a batch of ions with different starting positions and RF phases at every step of the scan.</p><div class="btnrow"><button class="primary" id="sAgain">Run the scan again</button></div>')+'';
+  b.querySelectorAll('[data-sset]').forEach(function(x){x.addEventListener('click',function(){SCN.set=x.dataset.sset;SCN.ions=MXSETS[SCN.set].ions.map(function(y){return {f:y[0],m:y[1]};});renderSC();scanRestart();});});
+  b.querySelectorAll('[data-smode]').forEach(function(x){x.addEventListener('click',function(){SCN.mode=x.dataset.smode;renderSC();scanRestart();});});
+  b.querySelectorAll('[data-lam]').forEach(function(x){x.addEventListener('click',function(){SCN.lam=+x.dataset.lam;renderSC();scanRestart();});});
+  var r=$('sLam'),tm=null;if(r)r.addEventListener('input',function(){SCN.lam=Math.round(0.168*this.value/1000*1000)/1000;this.style.setProperty('--p',(this.value/10)+'%');$('lamv').textContent=SCN.lam.toFixed(3);clearTimeout(tm);tm=setTimeout(function(){b.querySelectorAll('[data-lam]').forEach(function(x){x.setAttribute('aria-pressed',String(Math.abs(SCN.lam-(+x.dataset.lam))<1e-6));});scanRestart();},250);});
+  $('sAgain').addEventListener('click',scanRestart);}
+function scanRestart(){scanPrep();TAU=0;PLAY=true;update(false);}
+/* ===================== part: triple quad (slides 28–30) ===================== */
+var TQD={pre:488,name:'beauverolide [M+H]⁺',prod:[[460,38],[442,4],[375,100],[357,12],[332,3],[304,4],[285,50],[258,5],[203,10]],res:8},TQS=[['m/z 413',413],['beauverolide [M+H]⁺',488],['m/z 550',550]];
+var TQ={gas:true,lam:0.163,Va:0,Vb:1,qc:0.7,sp:[],sig:[],Vs:[],pk:0,paths:[],look:null},TQG=null,TQL=[],TQH=[],TQGAS=[],TQTAGS=[],TQZ={q1:[0,5.2],q2:[6.4,10.4],q3:[11.6,16.8],src:-1.8,det:18.4};
+function tqSpecies(){return TQ.gas?TQD.prod.map(function(p){return {m:p[0],w:p[1],f:String(p[0])};}).concat([{m:TQD.pre,w:TQD.res,f:'488 (precursor)'}]):[{m:TQD.pre,w:100,f:'488 (precursor)'}];}
+function tqPrep(){var w=lineWindow(TQ.lam);TQ.qc=(w[0]+w[1])/2;TQ.w=w;TQ.Va=0.94*TQ.qc*Kf(170)/2;TQ.Vb=TQ.qc*Kf(520)/2;var N=600;TQ.Vs=[];for(var i=0;i<N;i++)TQ.Vs.push(TQ.Va+(TQ.Vb-TQ.Va)*i/(N-1));
+  TQ.sp=tqSpecies();TQ.sig=TQ.Vs.map(function(V){var s=0;TQ.sp.forEach(function(o){var q=2*V/Kf(o.m);if(q>w[0]&&q<w[1])s+=o.w;});return s;});TQ.pk=-1;}
+function tqSetUV(){var V=TQ.Va+(TQ.Vb-TQ.Va)*Math.min(1,TAU);S.V=V;S.U=TQ.lam*V;}
+function tqMz(V){return 2*V/(TQ.qc*Kf(1));}
+function tqLabel(){return TAU<1?'Q3 scanning: m/z ≈ '+tqMz(S.V).toFixed(1):'Product ion scan complete';}
+function tqMat(c){return vac()?new T3.MeshStandardMaterial({color:c,metalness:0.8,roughness:0.3,envMap:makeEnv()}):new T3.MeshToonMaterial({color:c});}
+function tqBuild(){if(TQG){scene.remove(TQG);}TQG=new T3.Group();scene.add(TQG);TQ.look=vac();TQL=[];TQH=[];TQGAS=[];TQR=[];var c=1+RR,v=vac();
+  function quad(z0,z1,xc,yc){var L=z1-z0;[[c,0,xc],[-c,0,xc],[0,c,yc],[0,-c,yc]].forEach(function(p){var g=new T3.CylinderGeometry(RR,RR,L,40,1);g.rotateX(Math.PI/2);var m=new T3.Mesh(g,tqMat(p[2]));m.position.set(p[0],p[1],(z0+z1)/2);TQG.add(m);TQR.push(m);
+      if(!v){var e=new T3.LineSegments(new T3.EdgesGeometry(g,30),new T3.LineBasicMaterial({color:new T3.Color(css('--ink'))}));e.position.copy(m.position);TQG.add(e);}});}
+  quad(TQZ.q1[0],TQZ.q1[1],v?0xC9A07F:0xB77C5E,v?0x95AAC2:0x6F8DB8);quad(TQZ.q2[0],TQZ.q2[1],v?0xaab6c1:0xa9b4bf,v?0xaab6c1:0xa9b4bf);quad(TQZ.q3[0],TQZ.q3[1],v?0xC9A07F:0xB77C5E,v?0x95AAC2:0x6F8DB8);
+  var E=2*(1+2*RR)+0.7,cell=new T3.Mesh(new T3.BoxGeometry(E,E,TQZ.q2[1]-TQZ.q2[0]+0.6),new T3.MeshBasicMaterial({color:v?0x4a7fb5:0x8fb4d9,transparent:true,opacity:v?0.12:0.14,depthWrite:false}));cell.position.set(0,0,(TQZ.q2[0]+TQZ.q2[1])/2);TQG.add(cell);
+  var ce=new T3.LineSegments(new T3.EdgesGeometry(cell.geometry),new T3.LineBasicMaterial({color:new T3.Color(css('--muted'))}));ce.position.copy(cell.position);TQG.add(ce);
+  [[TQZ.src,1.6,1.2],[TQZ.det,2.2,0.9]].forEach(function(b){var m=new T3.Mesh(new T3.BoxGeometry(b[1],b[1],b[2]),tqMat(v?0x56626d:0xd9dfe4));m.position.set(0,0,b[0]);TQG.add(m);});
+  var seed=7;function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}for(var i=0;i<40;i++){var gs=new T3.Mesh(new T3.SphereGeometry(0.06,8,6),new T3.MeshBasicMaterial({color:0x8a96a3}));gs.position.set((rnd()-0.5)*2.6,(rnd()-0.5)*2.6,TQZ.q2[0]+rnd()*(TQZ.q2[1]-TQZ.q2[0]));gs.userData.p=gs.position.clone();TQG.add(gs);TQGAS.push(gs);}
+  for(var k=0;k<14;k++){var ln=new T3.Line(new T3.BufferGeometry().setAttribute('position',new T3.Float32BufferAttribute(new Float32Array(3*900),3)),new T3.LineBasicMaterial({color:0x0B7A5C}));ln.visible=false;TQG.add(ln);TQL.push(ln);
+    var hd=new T3.Mesh(new T3.SphereGeometry(0.15,14,10),new T3.MeshBasicMaterial({color:0x0B7A5C}));hd.visible=false;TQG.add(hd);TQH.push(hd);}}
+/* one packet of ions: Q1 (fixed on m/z 488), q2 (RF only; collisions), Q3 (at the current scan setting) */
+function tqPacket(){var K=Kf(TQD.pre),U1=0.231*K/4,V1=0.700*K/2,V2=0.30*K/2,paths=[];
+  function seg(o,z0,z1,x0,y0){var pts=o.pts,out=[];for(var i=0;i<pts.length;i+=3){var p=pts[i];out.push([p[0]+x0,p[1]+y0,z0+(z1-z0)*p[2]]);}var e=pts[pts.length-1];out.push([e[0]+x0,e[1]+y0,z0+(z1-z0)*e[2]]);return out;}
+  TQS.forEach(function(s,i){var o1=fly(s[1],U1,V1),pp=[[0,0,TQZ.src+0.6],[0,0,TQZ.q1[0]-0.3]].concat(seg(o1,TQZ.q1[0],TQZ.q1[1],0,0));var col=s[1]===TQD.pre?css('--ion'):(vac()?'#9AA7B3':'#6B7785');
+    if(o1.fate!=='pass'){paths.push({p:pp,col:col,lost:true});return;}
+    var o2=fly(s[1],0,V2);if(!TQ.gas){var p2=pp.concat(seg(o2,TQZ.q2[0],TQZ.q2[1],0,0));var o3=fly(s[1],S.U,S.V);p2=p2.concat(seg(o3,TQZ.q3[0],TQZ.q3[1],0,0));if(o3.fate==='pass')p2.push([0,0,TQZ.det-0.45]);paths.push({p:p2,col:col,lost:o3.fate!=='pass'});return;}
+    var cut=Math.floor(o2.pts.length*0.4),o2c={pts:o2.pts.slice(0,cut)},pre=pp.concat(seg(o2c,TQZ.q2[0],TQZ.q2[1],0,0)),cp=pre[pre.length-1];paths.push({p:pre,col:col,lost:false,frag:true});
+    tqSpecies().forEach(function(f,k){var of=fly(f.m,0,V2),st=Math.floor(of.pts.length*0.4),rest={pts:of.pts.slice(st)},a2=seg(rest,TQZ.q2[0],TQZ.q2[1],0,0),dx=cp[0]-a2[0][0],dy=cp[1]-a2[0][1];a2=a2.map(function(q,j){var fade=Math.max(0,1-j/12);return [q[0]+dx*fade,q[1]+dy*fade,q[2]];});
+      var o3=fly(f.m,S.U,S.V),a3=seg(o3,TQZ.q3[0],TQZ.q3[1],0,0),pf=[cp].concat(a2,a3);if(o3.fate==='pass')pf.push([0,0,TQZ.det-0.45]);paths.push({p:pf,col:GPAL[vac()?'vacuum':'figure'][1+k%5],lost:o3.fate!=='pass',t0:0.42});});});
+  TQ.paths=paths;TQ.pt=0;}
+var TQP=0,TQR=[];
+function updateTQ(){if(!TQG||TQ.look!==vac())tqBuild();if(!TQ.paths.length)tqPacket();TQG.visible=true;
+  var cx=Math.sin(CAM.az)*Math.cos(CAM.el),cyv=Math.sin(CAM.el);TQR.forEach(function(m){var near=(m.position.x*cx+m.position.y*cyv)>0.2,op=near?(vac()?0.2:0.16):1;m.material.transparent=op<1;m.material.opacity=op;m.material.depthWrite=op===1;});
+  TQGAS.forEach(function(g,i){g.visible=TQ.gas;g.position.set(g.userData.p.x+0.05*Math.sin(TQP*7+i),g.userData.p.y+0.05*Math.cos(TQP*6+i*1.3),g.userData.p.z);});
+  TQL.forEach(function(l,k){var P2=TQ.paths[k];l.visible=!!P2;TQH[k].visible=!!P2;if(!P2)return;var t0=P2.t0||0,f=Math.max(0,Math.min(1,(TQP-t0)/(1-t0)));if(TQP<t0){l.visible=false;TQH[k].visible=false;return;}
+    var n=Math.max(1,Math.floor(P2.p.length*(P2.frag?Math.min(1,TQP/0.42):f))),pos=l.geometry.attributes.position;for(var j=0;j<n&&j<900;j++){var q=P2.p[j];pos.setXYZ(j,q[0],q[1],q[2]);}l.geometry.setDrawRange(0,Math.min(n,900));pos.needsUpdate=true;
+    var col=new T3.Color(P2.col);l.material.color=col;TQH[k].material.color=col;var e=P2.p[Math.min(n,P2.p.length)-1];TQH[k].position.set(e[0],e[1],e[2]);if(P2.frag&&TQP>0.42)TQH[k].visible=false;});
+  tqTags();}
+function tqTags(){var box=$('tags');if(!TQTAGS.length){[['Q1: selects m/z 488',[0,-3.1,(TQZ.q1[0]+TQZ.q1[1])/2]],['q2: CID cell',[0,-3.4,(TQZ.q2[0]+TQZ.q2[1])/2]],['Q3: scans fragments',[0,-3.1,(TQZ.q3[0]+TQZ.q3[1])/2]],['ion source',[0,1.6,TQZ.src]],['detector',[0,1.9,TQZ.det]]].forEach(function(t){var d=document.createElement('div');d.className='tag rod';d.textContent=t[0];box.appendChild(d);TQTAGS.push({el:d,p:new T3.Vector3(t[1][0],t[1][1],t[1][2])});});}
+  var w=$('stage').clientWidth,h=$('stage').clientHeight;TQTAGS.forEach(function(t,i){var v=t.p.clone().project(camera);t.el.style.left=((v.x+1)/2*w)+'px';t.el.style.top=((1-v.y)/2*h)+'px';t.el.style.display=v.z<1&&w>=600?'':'none';});
+  TQTAGS[1].el.textContent='q2: CID cell, RF only'+(TQ.gas?', gas on':', gas off');}
+function statusTQ(){var s1=$('s1'),s2=$('s2'),pass=ION.filter(function(o){return o.fate==='pass';});
+  s1.innerHTML=TAU>=1?'Product ion scan of m/z 488 complete':'Q1 passes only m/z 488; Q3 now passing '+(pass.length?pass.map(function(o){return 'm/z '+o.m;}).join(', '):'nothing')+' (m/z ≈ '+tqMz(S.V).toFixed(0)+')';
+  s2.textContent=TQ.gas?'Q1 is a mass filter set on the precursor. In q2 (RF only, ion guide) the ions collide with the collision gas and fragment (CID). Q3 scans, so each fragment reaches the detector in turn: a product ion scan (slide 30).':'Collision gas off: q2 just guides m/z 488 through unchanged, so Q3 sees only the precursor. Turn the gas on to fragment it.';}
+function eqsTQ(){var K=Kf(TQD.pre),lightest=Math.min.apply(null,TQD.prod.map(function(p){return p[0];}));
+  $('eqbox').innerHTML='<div class="eq">Q1: <i>a</i> = 0.231, <i>q</i> = 0.700 for m/z 488<span class="n">a working point just under the tip: only the precursor passes (U = '+fV(0.231*K/4)+', V = '+fV(0.700*K/2)+')</span></div>'
+  +'<div class="eq">q2: <i>U</i> = 0, &nbsp; <i>q</i> = 0.30 for m/z 488<span class="n">RF only, so every ion with q below 0.908 is guided through. The lightest fragment, m/z '+lightest+', has q = '+(0.30*TQD.pre/lightest).toFixed(2)+', so all fragments are kept (slide 27).</span></div>'
+  +'<div class="eq">Q3: '+frac('<i>U</i>','<i>V</i>')+' = '+TQ.lam.toFixed(3)+', &nbsp; '+frac('<i>m</i>','<i>z</i>')+' ∝ <i>V</i><span class="n">Q3 scans like a single quadrupole; each fragment passes when the working point crosses its stable region</span></div>'
+  +'<div class="note" style="margin-top:6px">Fragments and intensities: beauverolide, from the MS² example on slide 52 (recorded on an ion trap; a triple quad gives a similar set of fragments, with intensities that depend on the collision energy). Peak shapes here are the ideal stability windows.</div>';}
+function drawTQ(){var cv=$('pathc'),rr=cv.getBoundingClientRect();if(!rr.width)return;var dpr=Math.min(2,window.devicePixelRatio||1);cv.width=rr.width*dpr;cv.height=rr.height*dpr;var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  var W=rr.width,H=rr.height,L=36,R=12,top=22,bot=H-28,ink=css('--ink'),mut=css('--muted'),ionc=css('--ion');c.clearRect(0,0,W,H);var m0=tqMz(TQ.Va),m1=tqMz(TQ.Vb);function X(m){return L+(m-m0)/(m1-m0)*(W-L-R);}function Y(v){return bot-v/100*(bot-top-12);}
+  c.strokeStyle=ink;c.lineWidth=1;c.beginPath();c.moveTo(L,bot);c.lineTo(W-R,bot);c.stroke();c.fillStyle=mut;c.font='10.5px '+css('--ui');c.textAlign='center';for(var m=200;m<=500;m+=(W<600?100:50))c.fillText(String(m),X(m),bot+13);c.fillText('m/z (Q3)',(L+W)/2,H-3);
+  c.textAlign='left';c.fillStyle=ink;c.font='600 12px '+css('--ui');c.fillText((W<600?'':'MS1 select (Q1) → CID (q2) → MS2 scan (Q3): ')+'product ion spectrum of m/z 488',L,13);
+  var kmax=Math.floor(Math.min(1,TAU)*(TQ.Vs.length-1));c.strokeStyle=ionc;c.lineWidth=1.8;c.beginPath();for(var k=0;k<=kmax;k++){var x=X(tqMz(TQ.Vs[k])),y=Y(TQ.sig[k]);if(k)c.lineTo(x,y);else c.moveTo(x,y);}c.stroke();
+  TQ.sp.forEach(function(o){if(tqMz(TQ.Vs[kmax])<o.m+0.5||o.w<4)return;c.fillStyle=o.m===TQD.pre?mut:ink;c.font=(o.w>=20?'600 ':'')+'11px '+css('--ui');c.textAlign='center';c.fillText(String(o.m),X(o.m),Y(o.w)-4);});c.textAlign='left';
+  c.strokeStyle=css('--red');c.setLineDash([3,3]);var xc=X(tqMz(S.V));c.beginPath();c.moveTo(xc,top);c.lineTo(xc,bot);c.stroke();c.setLineDash([]);}
+function renderTQ(soft){var b=$('ctlX');if(soft&&b.querySelector('#tqGas'))return;
+  b.innerHTML='<h2>Settings</h2><p class="note" style="margin-top:0">The sample contains beauverolide ([M+H]⁺ m/z 488) and two other ions (m/z 413 and 550). Q1 is set to pass only m/z 488.</p>'
+   +'<label class="check"><input type="checkbox" id="tqGas"'+(TQ.gas?' checked':'')+'> Collision gas in q2 (CID)</label><div class="btnrow"><button class="primary" id="tqAgain">Run the product ion scan again</button></div>';
+  $('tqGas').addEventListener('change',function(){TQ.gas=this.checked;tqRestart();});$('tqAgain').addEventListener('click',tqRestart);}
+function tqRestart(){tqPrep();TAU=0;PLAY=true;TQ.paths=[];update(false);}
+
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window.__q={rodCols:function(){return rods.map(function(m){return '#'+m.material.color.getHexString();}).join(' ');},skip:function(){if(PLAY)TAU=TMAX*0.9999;},get PLAY(){return PLAY;},get TAU(){return TAU;},get TMAX(){return TMAX;},S:S,G:G,get R(){return R;},get ION(){return ION;},update:update,setMode:setMode,fire:fire,nextRound:nextRound,setTau:function(f){PLAY=false;TAU=f*TMAX;DIRTY=true;tread();drawPaths();}};
+window.__q={setModeX:function(m){setMode(m);},get MODE(){return MODE;},SCN:SCN,TQ:TQ,MX:MX,FD:FD,keepOnly:function(i){keepOnly(i);},setT:function(f){PLAY=false;TAU=f;update(false);},rodCols:function(){return rods.map(function(m){return '#'+m.material.color.getHexString();}).join(' ');},skip:function(){if(PLAY)TAU=TMAX*0.9999;},get PLAY(){return PLAY;},get TAU(){return TAU;},get TMAX(){return TMAX;},S:S,G:G,get R(){return R;},get ION(){return ION;},update:update,setMode:setMode,fire:fire,nextRound:nextRound,setTau:function(f){PLAY=false;TAU=f*TMAX;DIRTY=true;tread();drawPaths();}};
 })();
 
 </script>
